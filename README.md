@@ -33,10 +33,10 @@ It offers both full and smoke tests across four key modules: APP, COM, RT, and S
     -rt_base_path = /home/max/Works/dx-all-suite/dx-runtime
     -com_base_path = /home/max/Works/dx-all-suite/dx-compiler
     -stream_base_path = /home/max/Works/dx-all-suite/dx-runtime/dx_stream
-    +app_base_path = /home/you/dx-all-suite/dx-runtime/dx_app
-    +rt_base_path = /home/you/Works/dx-all-suite/dx-runtime
-    +com_base_path = /home/you/Works/dx-all-suite/dx-compiler
-    +stream_base_path = /home/you/Works/dx-all-suite/dx-runtime/dx_stream
+    +app_base_path = /home/<your path>/dx-all-suite/dx-runtime/dx_app
+    +rt_base_path = /home/<your path>/dx-all-suite/dx-runtime
+    +com_base_path = /home/<your path>/dx-all-suite/dx-compiler
+    +stream_base_path = /home/<your path>/dx-all-suite/dx-runtime/dx_stream
     testpaths = tests
     timeout = 60
     filterwarnings = ignore:The 'py' module is deprecated:DeprecationWarning
