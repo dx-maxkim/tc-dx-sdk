@@ -1,0 +1,10 @@
+pytest
+pytest-xdist
+pytest-timeout
+pytest-html
+allure-pytest
+opencv-python
+flask
+PyYAML
+rich
+py

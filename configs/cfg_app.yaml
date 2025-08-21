@@ -1,0 +1,263 @@
+
+# 01 - DX_APP 의 빌드된 binary 파일들 확인하는 설정
+file_bin:
+  # 폴더 경로
+  directory: "bin"
+  # 폴더에 반드시 있어야 할 실행 파일 목록
+  expected_files:
+    - classification
+    - classification_async
+    - imagenet_classification
+    - od_segmentation
+    - pose
+    - run_classifier
+    - run_detector
+    - segmentation
+    - yolo
+    - yolo_multi
+
+
+# 02 - DX_APP 에서 사용될 DXNN model 파일들 확인하는 설정
+file_model:
+  # 폴더 경로
+  directory: "assets/models"
+  # 폴더에 반드시 있어야 할 실행 파일 목록
+  expected_files:
+    - DeepLabV3PlusMobileNetV2_2.dxnn
+    - EfficientNetB0_4.dxnn
+    - EfficientNetB0_8.dxnn
+    - MobileNetV2_2.dxnn
+    - osnet_x0_5_market_256x128.dxnn
+    - SCRFD500M_1.dxnn
+    - YOLOV3_1.dxnn
+    - YOLOV4_3.dxnn
+    - YOLOV5Pose640_1.dxnn
+    - YOLOV5S_1.dxnn
+    - YOLOV5S_3.dxnn
+    - YOLOV5S_4.dxnn
+    - YOLOV5S_6.dxnn
+    - YOLOV5S_Face-1.dxnn
+    - YOLOV5X_2.dxnn
+    - YOLOv7_512.dxnn
+    - YoloV7.dxnn
+    - YoloV8N.dxnn
+    - YOLOV9S.dxnn
+    - YOLOX-S_1.dxnn
+
+
+# 03 - DX_APP 에서 사용될 video 파일들 확인하는 설정 
+file_video:
+  # demo video path
+  directory: "assets/videos"
+  # 폴더에 반드시 있어야 할 실행 파일 목록
+  expected_files:
+    - blackbox-city-road2.mov
+    - blackbox-city-road.mp4
+    - boat.mp4
+    - carrierbag.mp4
+    - cctv-city-road2.mov
+    - cctv-city-road.mov
+    - codec_test_clip_h264_16Mbps.mp4
+    - codec_test_clip_h265_8Mbps.mp4
+    - dance-group2.mov
+    - dance-group.mov
+    - dance-solo.mov
+    - dogs.mp4
+    - doughnut.mp4
+    - dron-citry-road2.mov
+    - dron-citry-road.mov
+    - snowboard.mp4
+
+
+# 04 - classification test with an image input
+classification_image:
+  # 실행할 명령어
+  command: "bin/classification -m assets/models/EfficientNetB0_4.dxnn -i sample/ILSVRC2012/1.jpeg"
+  # 검증할 기대 출력값
+  expected_output: "Top1 Result : class 321"
+
+
+# 05 - classification with several images
+imagenet_classification_images:
+  # 실행할 명령어
+  command: "bin/imagenet_classification -m assets/models/EfficientNetB0_4.dxnn -i example/imagenet_classification/imagenet_val_map.txt -p sample/ILSVRC2012/"
+
+
+# 06 - yolo with image
+yolo_image:
+  # Test List
+  - name: "YOLOv7_512"
+    command: "./bin/yolo -m assets/models/YOLOv7_512.dxnn -i sample/1.jpg -p 3"
+    expected_result: "result.jpg"
+
+  - name: "YoloV7_640"
+    command: "./bin/yolo -m assets/models/YoloV7.dxnn -i sample/1.jpg -p 4"
+    expected_result: "result.jpg"
+
+
+# 07 - yolo with video
+yolo_video:
+  # 실행할 명령어
+  command: "bin/yolo -m assets/models/YOLOv7_512.dxnn -v assets/videos/boat.mp4 -p 3"
+
+
+# 08 - yolo with camera
+yolo_camera:
+  # 실행할 명령어
+  command: "bin/yolo -m assets/models/YOLOv7_512.dxnn -c -p 3"
+  # stop timeout
+
+
+# 09 - yolo with rtsp stream
+yolo_rtsp:
+  # 실행할 명령어
+  #command: "bin/yolo -m assets/models/YOLOv7_512.dxnn -p 5 -r rtsp://210.99.70.120:1935/live/cctv010.stream"
+  command: "bin/yolo -m assets/models/YOLOv7_512.dxnn -p 3 -r http://0.0.0.0:5000/video_feed"
+  enable_local_rtsp_server: "true"
+
+
+# 10 - yolo_multi with 36-ch videos
+yolo_multi_36_video:
+  # 실행할 명령어
+  command: "bin/yolo_multi -c example/yolo_multi/yolo_multi_36_demo.json"
+  copy_config: "true"
+
+
+# 11 - yolo_multi with 1 camera and 35-ch videos
+yolo_multi_1cam_35video:
+  # 실행할 명령어
+  command: "bin/yolo_multi -c example/yolo_multi/yolo_multi_1cam_35_demo.json"
+  copy_config: "true"
+
+
+# 12 - pose with image
+pose_image:
+  # 실행할 명령어
+  command: "bin/pose -m assets/models/YOLOV5Pose640_1.dxnn -i sample/7.jpg -p 0"
+  # 검증할 기대 출력값
+  expected_result: "result.jpg"
+
+
+# 13 - pose with video
+pose_video:
+  # 실행할 명령어
+  command: "bin/pose -m assets/models/YOLOV5Pose640_1.dxnn -v assets/videos/dance-solo.mov -p 0"
+
+
+# 14 - pose with camera
+pose_camera:
+  # 실행할 명령어
+  command: "bin/pose -m assets/models/YOLOV5Pose640_1.dxnn -c -p 0"
+
+
+# 16 - segmentation with image
+segmentation_image:
+  # 실행할 명령어
+  command: "bin/segmentation -m assets/models/DeepLabV3PlusMobileNetV2_2.dxnn -i sample/8.jpg"
+  # 검증할 기대 출력값
+  expected_result: "result.jpg"
+
+
+# 17 - segmentation with video
+segmentation_video:
+  # 실행할 명령어
+  command: "bin/segmentation -m assets/models/DeepLabV3PlusMobileNetV2_2.dxnn -v assets/videos/blackbox-city-road.mp4"
+
+
+# 18 - segmentation with camera
+segmentation_camera:
+  # 실행할 명령어
+  command: "bin/segmentation -m assets/models/DeepLabV3PlusMobileNetV2_2.dxnn -c"
+
+
+# 20 - od_segmentation with image
+od_segmentation_image:
+  # 실행할 명령어
+  command: "bin/od_segmentation -m0 assets/models/YoloV7.dxnn -p0 3 -m1 assets/models/DeepLabV3PlusMobileNetV2_2.dxnn -i sample/8.jpg"
+  # 검증할 기대 출력값
+  expected_result: "result.jpg"
+
+
+# 21 - od_segmentation with video
+od_segmentation_video:
+  # 실행할 명령어
+  command: "bin/od_segmentation -m0 assets/models/YoloV7.dxnn -p0 3 -m1 assets/models/DeepLabV3PlusMobileNetV2_2.dxnn -v assets/videos/blackbox-city-road2.mov"
+
+
+# 22 - od_segmentation with camera
+od_segmentation_camera:
+  # 실행할 명령어
+  command: "bin/od_segmentation -m0 assets/models/YoloV7.dxnn -p0 3 -m1 assets/models/DeepLabV3PlusMobileNetV2_2.dxnn -c"
+
+
+# 24 - run_classifier 
+run_classifier_test:
+  # 실행할 명령어
+  command: "bin/run_classifier -c example/run_classifier/imagenet_example.json"
+  # 검증할 기대 출력값
+  expected_output: |
+    [sample/ILSVRC2012/0.jpeg] Top1 Result : class 831 (studio couch, day bed)
+    [sample/ILSVRC2012/1.jpeg] Top1 Result : class 321 (admiral)
+    [sample/ILSVRC2012/2.jpeg] Top1 Result : class 846 (table lamp)
+    [sample/ILSVRC2012/3.jpeg] Top1 Result : class 794 (shower curtain)
+
+
+# 25 - run_detector
+run_detector_test:
+  # 실행할 명령어
+  command: "bin/run_detector -c example/run_detector/yolov5s3_example.json"
+  # 검증할 기대 출력값
+  expected_output: |
+    save file : result-app1.jpg
+    save file : result-app2.jpg
+    save file : result-app3.jpg
+    save file : result-app4.jpg
+    save file : result-app5.jpg
+     detector application End.
+
+
+# 26 - dxengine_install
+dxengine_install_test:
+  # 실행할 명령어
+  venv_python: "../../venv-dx-runtime" # python_package 기준으로 상대위치
+  dxengine_path: "../dx_rt/python_package"
+  # 검증할 기대 출력값
+  expected_output: |
+    Successfully built dx-engine
+    Installing collected packages: dx-engine
+      Attempting uninstall: dx-engine
+        Found existing installation: dx-engine 1.1.2
+        Uninstalling dx-engine-1.1.2:
+          Successfully uninstalled dx-engine-1.1.2
+    Successfully installed dx-engine-1.1.2
+
+
+# 27 - python imagenet
+python_imagenet_test:
+  # 실행할 명령어
+  venv_python: "../venv-dx-runtime/bin/python3"
+  command: "templates/python/imageNet_example.py --config example/run_classifier/imagenet_example.json"
+  # 검증할 기대 출력값
+  expected_output: |
+    [sample/ILSVRC2012/0.jpeg] Top1 Result : class 831 (studio couch, day bed)
+    [sample/ILSVRC2012/1.jpeg] Top1 Result : class 321 (admiral)
+    [sample/ILSVRC2012/2.jpeg] Top1 Result : class 846 (table lamp)
+    [sample/ILSVRC2012/3.jpeg] Top1 Result : class 794 (shower curtain)
+
+
+# 28 - python yolov5s
+python_yolov5s_test:
+  # 실행할 명령어
+  venv_python: "../venv-dx-runtime/bin/python3"
+  command: "templates/python/yolov5s_example.py --config example/run_detector/yolov5s3_example.json"
+  # 검증할 기대 출력값
+  expected_output: |
+    dxrt inference Done! 
+    decoding output Done! 
+    [Result] Detected 4 Boxes.
+    [0] conf, classID, x1, y1, x2, y2, : 0.8054, horse(17), 3, 212, 209, 359
+    [1] conf, classID, x1, y1, x2, y2, : 0.6319, cow(19), 289, 226, 395, 316
+    [2] conf, classID, x1, y1, x2, y2, : 0.5420, horse(17), 0, 208, 101, 273
+    [3] conf, classID, x1, y1, x2, y2, : 0.5380, horse(17), 162, 217, 283, 329
+    save file : yolov5s_5.jpg
+
