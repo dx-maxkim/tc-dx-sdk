@@ -86,12 +86,48 @@ imagenet_classification_images:
 # 06 - yolo with image
 yolo_image:
   # Test List
-  - name: "YOLOv7_512"
-    command: "./bin/yolo -m assets/models/YOLOv7_512.dxnn -i sample/1.jpg -p 3"
+  - name: "YOLOV5S_4"
+    command: "./bin/yolo -m assets/models/YOLOV5S_4.dxnn -i sample/face_sample.jpg -p 0"
     expected_result: "result.jpg"
 
-  - name: "YoloV7_640"
-    command: "./bin/yolo -m assets/models/YoloV7.dxnn -i sample/1.jpg -p 4"
+  - name: "YOLOV5S_3"
+    command: "bin/yolo -m assets/models/YOLOV5S_3.dxnn -i sample/face_sample.jpg -p 1"
+    expected_result: "result.jpg"
+
+  - name: "YOLOV5S_6"
+    command: "bin/yolo -m assets/models/YOLOV5S_6.dxnn -i sample/face_sample.jpg -p 2"
+    expected_result: "result.jpg"
+
+  - name: "YOLOv7"
+    command: "./bin/yolo -m assets/models/YOLOv7_512.dxnn -i sample/face_sample.jpg -p 3"
+    expected_result: "result.jpg"
+
+  - name: "YoloV7"
+    command: "bin/yolo -m assets/models/YoloV7.dxnn -i sample/face_sample.jpg -p 4"
+    expected_result: "result.jpg"
+
+  - name: "YoloV8N"
+    command: "bin/yolo -m assets/models/YoloV8N.dxnn -i sample/face_sample.jpg -p 5"
+    expected_result: "result.jpg"
+
+  - name: "YOLOX-S_1"
+    command: "bin/yolo -m assets/models/YOLOX-S_1.dxnn -i sample/face_sample.jpg -p 6"
+    expected_result: "result.jpg"
+
+  - name: "YOLOV5S_Face-1"
+    command: "bin/yolo -m assets/models/YOLOV5S_Face-1.dxnn -i sample/face_sample.jpg -p 7"
+    expected_result: "result.jpg"
+
+  - name: "YOLOV3_1"
+    command: "bin/yolo -m assets/models/YOLOV3_1.dxnn -i sample/face_sample.jpg -p 8"
+    expected_result: "result.jpg"
+
+  - name: "YOLOV4_3"
+    command: "bin/yolo -m assets/models/YOLOV4_3.dxnn -i sample/face_sample.jpg -p 9"
+    expected_result: "result.jpg"
+
+  - name: "YOLOV9S"
+    command: "bin/yolo -m assets/models/YOLOV9S.dxnn -i sample/face_sample.jpg -p 10"
     expected_result: "result.jpg"
 
 
@@ -208,7 +244,7 @@ run_detector_test:
   command: "bin/run_detector -c example/run_detector/yolov5s3_example.json"
   # 검증할 기대 출력값
   expected_output: |
-    save file : result-app1.jpg
+    save file : result-appface_sample.jpg
     save file : result-app2.jpg
     save file : result-app3.jpg
     save file : result-app4.jpg
