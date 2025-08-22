@@ -53,11 +53,12 @@ def test_pose_from_config(app_base_path, timeout_sec):
                 )
         # 2. config 파일에 지정된 시간(초)만큼 대기
         print(f"{timeout_sec}초 동안 대기합니다...")
-        time.sleep(timeout_sec)
+        time.sleep(timeout_sec/2)
 
         print("프로세스 상태 확인...")
         assert process.poll() is None, f"프로세스가 {timeout_sec}초 이내에 비정상 종료되었습니다."
 
+        time.sleep(timeout_sec/2)
         # 3. 대기 시간이 끝난 후, 프로세스에 종료 신호(SIGINT) 전송
         print(f"시간 초과. 프로세스(PID: {process.pid})에 종료 신호를 보냅니다.")
         process.send_signal(signal.SIGINT) # Ctrl+C와 동일한 신호

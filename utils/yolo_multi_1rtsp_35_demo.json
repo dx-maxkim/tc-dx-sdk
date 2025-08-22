@@ -4,7 +4,7 @@
     "model_name": "yolov5s_512",
 
     "video_sources": [
-	[ "/dev/video0", "camera" ],
+	[ "http://0.0.0.0:5000/video_feed", "rtsp" ],
         [ "./assets/videos/dance-group.mov", "offline", 30 ],
         [ "./assets/videos/cctv-city-road2.mov", "offline", 30 ],
         [ "./assets/videos/dance-solo.mov", "offline", 30 ],

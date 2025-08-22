@@ -134,7 +134,7 @@ yolo_image:
 # 07 - yolo with video
 yolo_video:
   # 실행할 명령어
-  command: "bin/yolo -m assets/models/YOLOv7_512.dxnn -v assets/videos/boat.mp4 -p 3"
+  command: "bin/yolo -m assets/models/YOLOv7_512.dxnn -v assets/videos/boat.mp4 -l -p 3"
 
 
 # 08 - yolo with camera
@@ -166,7 +166,15 @@ yolo_multi_1cam_35video:
   copy_config: "true"
 
 
-# 12 - pose with image
+# 12 - yolo_multi with 1 rtsp and 35-ch videos
+yolo_multi_1rtsp_35video:
+  # 실행할 명령어
+  command: "bin/yolo_multi -c example/yolo_multi/yolo_multi_1rtsp_35_demo.json"
+  copy_config: "true"
+  enable_local_rtsp_server: "true"
+
+
+# 13 - pose with image
 pose_image:
   # 실행할 명령어
   command: "bin/pose -m assets/models/YOLOV5Pose640_1.dxnn -i sample/7.jpg -p 0"
@@ -174,13 +182,13 @@ pose_image:
   expected_result: "result.jpg"
 
 
-# 13 - pose with video
+# 14 - pose with video
 pose_video:
   # 실행할 명령어
-  command: "bin/pose -m assets/models/YOLOV5Pose640_1.dxnn -v assets/videos/dance-solo.mov -p 0"
+  command: "bin/pose -m assets/models/YOLOV5Pose640_1.dxnn -v assets/videos/dance-solo.mov -l -p 0"
 
 
-# 14 - pose with camera
+# 15 - pose with camera
 pose_camera:
   # 실행할 명령어
   command: "bin/pose -m assets/models/YOLOV5Pose640_1.dxnn -c -p 0"
@@ -197,7 +205,7 @@ segmentation_image:
 # 17 - segmentation with video
 segmentation_video:
   # 실행할 명령어
-  command: "bin/segmentation -m assets/models/DeepLabV3PlusMobileNetV2_2.dxnn -v assets/videos/blackbox-city-road.mp4"
+  command: "bin/segmentation -m assets/models/DeepLabV3PlusMobileNetV2_2.dxnn -v assets/videos/blackbox-city-road.mp4 -l"
 
 
 # 18 - segmentation with camera
@@ -217,7 +225,7 @@ od_segmentation_image:
 # 21 - od_segmentation with video
 od_segmentation_video:
   # 실행할 명령어
-  command: "bin/od_segmentation -m0 assets/models/YoloV7.dxnn -p0 3 -m1 assets/models/DeepLabV3PlusMobileNetV2_2.dxnn -v assets/videos/blackbox-city-road2.mov"
+  command: "bin/od_segmentation -m0 assets/models/YoloV7.dxnn -p0 3 -m1 assets/models/DeepLabV3PlusMobileNetV2_2.dxnn -v assets/videos/blackbox-city-road2.mov -l"
 
 
 # 22 - od_segmentation with camera

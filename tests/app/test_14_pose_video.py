@@ -15,17 +15,17 @@ def load_config():
     
     with open(config_path, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
-    return config['od_segmentation_video']
+    return config['pose_video']
 
 @pytest.mark.parametrize("timeout_sec", [
     pytest.param(5, marks=pytest.mark.smoke),
     pytest.param(10, marks=pytest.mark.normal),
     pytest.param(60, marks=pytest.mark.stress),
 ])
-def test_seg_od_from_config(app_base_path, timeout_sec):
+def test_pose_from_config(app_base_path, timeout_sec):
     """
-    segmentation & object detection 을 지정된 video input 으로  실행하고 결과를 검증
-    - Pass: 문제없이 수행되고 지정된 시간에 정상 종료
+    pose 어플리케이션을 video input 으로 실행하고 결과를 검증
+    - Pass: 문제없이 수행되고 지정된 시간까지 문제없이 동작
     - Fail: 동작을 안하거나 동작 간 에러 발생
     """
     # YAML 파일에서 설정 정보를 불러옵니다.

@@ -35,7 +35,11 @@
         [ "./assets/videos/codec_test_clip_h264_16Mbps.mp4", "offline", 30 ],
         [ "./assets/videos/codec_test_clip_h265_8Mbps.mp4", "offline", 30 ],
         [ "./assets/videos/blackbox-city-road.mp4", "offline", 30 ],
-        [ "./assets/videos/cctv-city-road.mov", "offline", 30 ]
+        [ "./assets/videos/cctv-city-road.mov", "offline", 30 ],
+        [ "./assets/videos/dance-solo.mov", "offline", 30 ],
+        [ "./assets/videos/codec_test_clip_h264_16Mbps.mp4", "offline", 30 ],
+        [ "./assets/videos/codec_test_clip_h265_8Mbps.mp4", "offline", 30 ],
+        [ "./assets/videos/blackbox-city-road.mp4", "offline", 30 ]
     ],
 
     "display_config": {

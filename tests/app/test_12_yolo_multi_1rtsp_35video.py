@@ -6,6 +6,7 @@ import os
 import pathlib
 import time
 import signal
+import shutil
 
 def load_config():
     """config.yaml 파일을 읽어와 설정을 반환합니다."""
@@ -15,26 +16,42 @@ def load_config():
     
     with open(config_path, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
-    return config['pose_video']
+    return config['yolo_multi_1rtsp_35video']
 
 @pytest.mark.parametrize("timeout_sec", [
-    pytest.param(5, marks=pytest.mark.smoke),
-    pytest.param(10, marks=pytest.mark.normal),
-    pytest.param(60, marks=pytest.mark.stress),
+    pytest.param(20, marks=pytest.mark.smoke),
+    pytest.param(30, marks=pytest.mark.normal),
+    pytest.param(80, marks=pytest.mark.stress),
 ])
-def test_pose_from_config(app_base_path, timeout_sec):
+def test_yolo_from_config(app_base_path, timeout_sec):
     """
-    pose 어플리케이션을 video input 으로 실행하고 결과를 검증
-    - Pass: 문제없이 수행되고 지정된 시간까지 문제없이 동작
+    yolo_multi 어플리케이션을 파일에 정의된 configuration 로 수행 후 결과 검증 (1 rtsp + 35-ch videos)
+    - Pass: 문제없이 수행되고 지정된 시간까지 실행 후 에러없이 종료
     - Fail: 동작을 안하거나 동작 간 에러 발생
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
     config = load_config()
     command_str = config.get('command')
+    copy_config = config.get('copy_config')
+    enable_local_rtsp_server = config.get('enable_local_rtsp_server')
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not command_str:
         pytest.fail("config 파일에 'command' 키가 없습니다.")
+
+    # test case 에서 정의한 1 rtsp + 35-ch video script 를 copy
+    if copy_config == 'true':
+        src_file = "utils/yolo_multi_1rtsp_35_demo.json"
+        dst_file = f"{app_base_path}/example/yolo_multi/yolo_multi_1rtsp_35_demo.json"
+        shutil.copy(src_file, dst_file)
+        assert pathlib.Path(dst_file).exists(), "파일이 제대로 복사되지 않았습니다."
+
+    rtsp_server_process = None
+    if enable_local_rtsp_server == 'true':
+        rtsp_command = shlex.split('python3 utils/rtsp_server.py')
+        rtsp_server_process = subprocess.Popen(rtsp_command)
+        time.sleep(1) # wait for camera ready
+
 
     command_parts = shlex.split(command_str)
 
@@ -100,4 +117,7 @@ def test_pose_from_config(app_base_path, timeout_sec):
         pytest.fail(f"테스트 실행 중 예기치 않은 오류 발생: {e}")
 
     finally:
+        if rtsp_server_process:
+            print(f"RTSP 서버 프로세스 (PID: {rtsp_server_process.pid})를 종료합니다.")
+            rtsp_server_process.kill()
         os.chdir(bk_path)
