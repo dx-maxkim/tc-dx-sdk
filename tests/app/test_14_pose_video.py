@@ -1,36 +1,25 @@
 import subprocess
 import pytest
-import yaml
 import shlex # 쉘 명령어를 안전하게 분리하기 위한 모듈
 import os
 import pathlib
 import time
 import signal
 
-def load_config():
-    """config.yaml 파일을 읽어와 설정을 반환합니다."""
-    config_path = pathlib.Path('configs/cfg_app.yaml')
-    if not config_path.is_file():
-        pytest.fail(f"설정 파일 '{config_path}'를 찾을 수 없습니다.")
-    
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-    return config['pose_video']
-
 @pytest.mark.parametrize("timeout_sec", [
     pytest.param(5, marks=pytest.mark.smoke),
     pytest.param(10, marks=pytest.mark.normal),
     pytest.param(60, marks=pytest.mark.stress),
 ])
-def test_pose_from_config(app_base_path, timeout_sec):
+def test_pose_from_config(app_base_path, timeout_sec, config):
     """
     pose 어플리케이션을 video input 으로 실행하고 결과를 검증
     - Pass: 문제없이 수행되고 지정된 시간까지 문제없이 동작
     - Fail: 동작을 안하거나 동작 간 에러 발생
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    config = load_config()
-    command_str = config.get('command')
+    cfg = config['pose_video'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
+    command_str = cfg.get('command')
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not command_str:

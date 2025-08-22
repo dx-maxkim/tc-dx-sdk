@@ -1,36 +1,25 @@
 import subprocess
 import pytest
-import yaml
 import shlex # 쉘 명령어를 안전하게 분리하기 위한 모듈
 import os
 import pathlib
 import time
 import signal
 
-def load_config():
-    """config.yaml 파일을 읽어와 설정을 반환합니다."""
-    config_path = pathlib.Path('configs/cfg_app.yaml')
-    if not config_path.is_file():
-        pytest.fail(f"설정 파일 '{config_path}'를 찾을 수 없습니다.")
-    
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-    return config['imagenet_classification_images']
-
 @pytest.mark.parametrize("timeout_sec", [
     pytest.param(5, marks=pytest.mark.smoke),
     pytest.param(10, marks=pytest.mark.normal),
     pytest.param(60, marks=pytest.mark.stress),
 ])
-def test_imagenet_classification_from_config(app_base_path, timeout_sec):
+def test_imagenet_classification_from_config(app_base_path, timeout_sec, config):
     """
     imagenet_classification 을 정해진 시간만큼 실행하고 종료
     - Pass: 정해진 시간동안 에러없이 inference 수행
     - Fail: 프로그램이 실행되지 않거나 에러 발생하는 경우
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    config = load_config()
-    command_str = config.get('command')
+    cfg = config['imagenet_classification_images'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
+    command_str = cfg.get('command')
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not command_str:

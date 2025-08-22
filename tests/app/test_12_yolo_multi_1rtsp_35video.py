@@ -1,6 +1,5 @@
 import subprocess
 import pytest
-import yaml
 import shlex # 쉘 명령어를 안전하게 분리하기 위한 모듈
 import os
 import pathlib
@@ -8,32 +7,22 @@ import time
 import signal
 import shutil
 
-def load_config():
-    """config.yaml 파일을 읽어와 설정을 반환합니다."""
-    config_path = pathlib.Path('configs/cfg_app.yaml')
-    if not config_path.is_file():
-        pytest.fail(f"설정 파일 '{config_path}'를 찾을 수 없습니다.")
-    
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-    return config['yolo_multi_1rtsp_35video']
-
 @pytest.mark.parametrize("timeout_sec", [
     pytest.param(20, marks=pytest.mark.smoke),
     pytest.param(30, marks=pytest.mark.normal),
     pytest.param(80, marks=pytest.mark.stress),
 ])
-def test_yolo_from_config(app_base_path, timeout_sec):
+def test_yolo_from_config(app_base_path, timeout_sec, config):
     """
     yolo_multi 어플리케이션을 파일에 정의된 configuration 로 수행 후 결과 검증 (1 rtsp + 35-ch videos)
     - Pass: 문제없이 수행되고 지정된 시간까지 실행 후 에러없이 종료
     - Fail: 동작을 안하거나 동작 간 에러 발생
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    config = load_config()
-    command_str = config.get('command')
-    copy_config = config.get('copy_config')
-    enable_local_rtsp_server = config.get('enable_local_rtsp_server')
+    cfg = config['yolo_multi_1rtsp_35video']
+    command_str = cfg.get('command')
+    copy_config = cfg.get('copy_config')
+    enable_local_rtsp_server = cfg.get('enable_local_rtsp_server')
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not command_str:

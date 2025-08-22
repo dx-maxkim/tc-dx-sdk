@@ -1,38 +1,27 @@
 import subprocess
 import pytest
-import yaml
 import shlex # 쉘 명령어를 안전하게 분리하기 위한 모듈
 import os
 from pathlib import Path
 
-def load_config():
-    """config.yaml 파일을 읽어와 설정을 반환합니다."""
-    config_path = Path('configs/cfg_app.yaml')
-    if not config_path.is_file():
-        pytest.fail(f"설정 파일 '{config_path}'를 찾을 수 없습니다.")
-    
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-    return config['dxengine_install_test']
-
 @pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
-def test_run_imagenet_from_config(app_base_path):
+def test_run_imagenet_from_config(app_base_path, config):
     """
     파일에 정의된 설치 경로에 따라 dx-engine install 잘 되는지 검증
     - Pass: 정상적으로 설치 완료된 출력문 확인
     - Fail:설치가 되지 않거나 예상된 설치 완료 출력문 불일치
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    config = load_config()
-    expected_output = config.get('expected_output')
-    target_venv_python = Path(config.get('venv_python'))
-    dxengine_install_path = Path(config.get('dxengine_path'))
+    cfg = config['dxengine_install_test'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
+    expected_output = cfg.get('expected_output')
+    target_venv_python = Path(cfg.get('venv_python'))
+    dxengine_install_path = Path(cfg.get('dxengine_path'))
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not expected_output or not target_venv_python or not dxengine_install_path:
-        pytest.fail("config_26.yaml 파일에 'expected_output' or  'target_venv_python' or 'dxengine_install_path' 키가 없습니다.")
+        pytest.fail("config 파일에 'expected_output' or  'target_venv_python' or 'dxengine_install_path' 키가 없습니다.")
 
     bk_path = os.getcwd()
     os.chdir(app_base_path)

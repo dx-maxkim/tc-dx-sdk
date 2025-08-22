@@ -1,33 +1,22 @@
 import subprocess
 import pytest
-import yaml
 import shlex # 쉘 명령어를 안전하게 분리하기 위한 모듈
 import os
 import pathlib
 
-def load_config():
-    """config.yaml 파일을 읽어와 설정을 반환합니다."""
-    config_path = pathlib.Path('configs/cfg_app.yaml')
-    if not config_path.is_file():
-        pytest.fail(f"설정 파일 '{config_path}'를 찾을 수 없습니다.")
-    
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-    return config['segmentation_image']
-
 @pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
-def test_pose_from_config(app_base_path):
+def test_pose_from_config(app_base_path, config):
     """
     segmentstion 을 지정된 image input 으로  실행하고 결과를 검증
     - Pass: 문제없이 수행되고 결과를 이미지 파일로 <model name>_result.jpg 로 output 폴더에 저장
     - Fail: 동작을 안하거나 동작 간 에러 발생, 또는 결과파일 생성 안됨
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    config = load_config()
-    command_str = config.get('command')
-    result_file = pathlib.Path(config.get('expected_result'))
+    cfg = config['segmentation_image'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
+    command_str = cfg.get('command')
+    result_file = pathlib.Path(cfg.get('expected_result'))
 
     # 혹시 이전에 실패해서 파일이 남아있다면 미리 삭제하여 테스트 환경을 깨끗하게 합니다.
     if result_file.exists():
@@ -35,7 +24,7 @@ def test_pose_from_config(app_base_path):
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not command_str or not result_file:
-        pytest.fail("config_16.yaml 파일에 'command' 또는 'expected_result' 키가 없습니다.")
+        pytest.fail("config 파일에 'command' 또는 'expected_result' 키가 없습니다.")
 
     command_parts = shlex.split(command_str)
 

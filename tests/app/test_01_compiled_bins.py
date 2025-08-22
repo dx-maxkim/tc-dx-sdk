@@ -1,33 +1,19 @@
-import yaml         # PyYAML 라이브러리
 import pathlib
 import pytest
-
-# --- 설정 로드 함수 ---
-def load_config():
-    """config.yaml 파일을 읽어와 설정을 반환합니다."""
-    config_path = pathlib.Path('configs/cfg_app.yaml')
-    if not config_path.is_file():
-        pytest.fail(f"설정 파일 '{config_path}'를 찾을 수 없습니다.")
-    
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-    return config['file_bin']
-
-# --- 테스트 코드 ---
-# 테스트 함수가 실행되기 전에 설정 파일을 미리 읽어옵니다.
-CONFIG = load_config()
-APP_DIR = pathlib.Path(CONFIG['directory'])
-EXPECTED_FILES = set(CONFIG['expected_files']) # 리스트를 집합(set)으로 변환
 
 @pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
-def test_directory_contains_exact_files_from_config(app_base_path):
+def test_directory_contains_exact_files_from_config(app_base_path, config):
     """
     dx_app/bin 폴더 아래에 빌드된 demo excutable 실행파일들이 있는지 확인
      - Pass: 목록에 있는 파일들이 모두 존재하는 경우
      - Fail: 목록에 있는 파일들이 없거나 목록 외의  다른 파일이 있을 경우
     """
+    CONFIG = config['file_bin'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
+    APP_DIR = pathlib.Path(CONFIG['directory'])
+    EXPECTED_FILES = set(CONFIG['expected_files']) # 리스트를 집합(set)으로 변환
+
     # 1. 테스트할 폴더가 존재하는지 확인합니다.
     BASE_PATH = pathlib.Path(app_base_path)
     APP_PATH = BASE_PATH / APP_DIR

@@ -1,31 +1,20 @@
 import subprocess
 import pytest
-import yaml
 import shlex # 쉘 명령어를 안전하게 분리하기 위한 모듈
 import os
 import pathlib
 
-def load_config():
-    """config.yaml 파일을 읽어와 설정을 반환합니다."""
-    config_path = pathlib.Path('configs/cfg_app.yaml')
-    if not config_path.is_file():
-        pytest.fail(f"설정 파일 '{config_path}'를 찾을 수 없습니다.")
-    
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-    return config['classification_image']
-
 @pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
-def test_classification_from_config(app_base_path):
+def test_classification_from_config(app_base_path, config):
     """
     classificaiton 을 실행하고 결과를 검증 (Input: image)
     - Pass: Inference 결과 출력
     - Fail: 실행이 안되거나 다른 결과를 출력
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    config = load_config()
+    config = config['classification_image'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
     command_str = config.get('command')
     expected_output = config.get('expected_output')
 
@@ -68,4 +57,3 @@ def test_classification_from_config(app_base_path):
 
     finally:
         os.chdir(bk_path)
-

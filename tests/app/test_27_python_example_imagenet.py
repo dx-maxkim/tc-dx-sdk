@@ -1,34 +1,23 @@
 import subprocess
 import pytest
-import yaml
 import shlex # 쉘 명령어를 안전하게 분리하기 위한 모듈
 import os
 import pathlib
 
-def load_config():
-    """config.yaml 파일을 읽어와 설정을 반환합니다."""
-    config_path = pathlib.Path('configs/cfg_app.yaml')
-    if not config_path.is_file():
-        pytest.fail(f"설정 파일 '{config_path}'를 찾을 수 없습니다.")
-    
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-    return config['python_imagenet_test']
-
 @pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
-def test_run_imagenet_from_config(app_base_path):
+def test_run_imagenet_from_config(app_base_path, config):
     """
     imageNet_example.py 실행하고 결과를 검증
     - Pass: 문제없이 수행되고 예상되는 결과를 출력
     - Fail: 동작을 안하거나 예상된 결과와 다른 결과를 출력
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    config = load_config()
-    target_venv_python = config.get('venv_python')
-    command_str = config.get('command')
-    expected_output = config.get('expected_output')
+    cfg = config['python_imagenet_test'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
+    target_venv_python = cfg.get('venv_python')
+    command_str = cfg.get('command')
+    expected_output = cfg.get('expected_output')
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not command_str or not expected_output or not target_venv_python:
