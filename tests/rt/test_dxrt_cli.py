@@ -1,8 +1,10 @@
 import pytest
 import subprocess
 import re
+import shlex
 import time
 import os
+import pathlib
 
 # 테스트 설정을 하나의 딕셔너리로 통합하여 관리
 CONFIG = {
@@ -25,9 +27,9 @@ CONFIG = {
 }
 
 # --- 헬퍼 함수들 ---
-def run_command(args):
+def run_command(cmd_str):
     """커맨드를 실행하고 결과를 반환하는 헬퍼 함수"""
-    command = [CONFIG["EXECUTABLE"]] + [os.path.expanduser(str(arg)) for arg in args]
+    command = shlex.split(cmd_str)
     print(f"### Command: {command} ###")
     try:
         result = subprocess.run(
@@ -58,9 +60,9 @@ def validate_monitor_block(block_text, expected_npu_count_per_block):
         f"NPU info count mismatch in monitor block. Expected {expected_npu_count_per_block}, got {len(npu_matches)}."
     assert "dvfs" in block_text, "DVFS info is missing."
 
-def get_current_fw_version():
+def get_current_fw_version(config):
     """-s 명령을 실행하여 현재 펌웨어 버전을 추출합니다."""
-    status_output = run_command(["-s"])
+    status_output = run_command(f"{config['EXECUTABLE']} -s")
     match = re.search(r"FW version\s*:\s*(v\d+\.\d+\.\d+)", status_output)
     if not match:
         pytest.fail("Could not find firmware version in status output.")
@@ -68,15 +70,13 @@ def get_current_fw_version():
 
 
 # --- 테스트 함수들 ---
-@pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
 @pytest.mark.parametrize("arg", ["-h", "--help"])
-def test_help_options(arg):
+def test_help_options(arg, config):
     """dxrt-cli 의 -h 와 --help 옵션이 모두 동일하게 동작하는지 테스트합니다."""
-    output_text = run_command([arg])
-    print(f"--------------- output ----------------\n{output_text}")
-    print("-"*40)
+    cmd_str = config['EXECUTABLE'] + ' ' + arg
+    output_text = run_command(cmd_str)
     required_items = [
         f"DXRT {CONFIG['CURRENT_VERSIONS']['CLI']}", "-s", "-m", "-r", "-d", "-u",
         "-g", "-C", "-v", "-h"
@@ -85,20 +85,16 @@ def test_help_options(arg):
         assert item in output_text, f"'{item}' not found in help message for '{arg}'."
 
 
-@pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
 @pytest.mark.parametrize("arg", ["-s", "--status"])
-def test_status_options(arg):
+def test_status_options(arg, config):
     """-s 와 --status 옵션이 모두 동일하게 동작하는지 테스트합니다."""
-    output_text = run_command([arg])
-
-    print(f"--------------- output ----------------\n{output_text}")
-    print("-"*40)
-    versions = CONFIG["CURRENT_VERSIONS"]
-    print(f"rt driver version = {versions['RT_DRIVER']}")
-    assert versions["CLI"] in output_text.splitlines()[0]
-    assert f"RT Driver version    : {versions['RT_DRIVER']}" in output_text
+    cmd_str = config['EXECUTABLE'] + ' ' + arg
+    output_text = run_command(cmd_str)
+    versions = config['CURRENT_VERSIONS']
+    assert versions['CLI'] in output_text.splitlines()[0]
+    assert f"RT Driver version   : {versions['RT_DRIVER']}" in output_text
     assert f"PCIe Driver version : {versions['PCIE_DRIVER']}" in output_text
     assert f"FW version          : {versions['FIRMWARE']}" in output_text
 
@@ -115,13 +111,16 @@ def test_status_options(arg):
         f"Expected {expected_total_npu_count} NPU stats (from {dxrt_device_count} dxrt devices), but found {len(npu_matches)}."
 
 
+@pytest.mark.normal
+@pytest.mark.stress
 @pytest.mark.parametrize("arg", ["-m", "--monitor"])
-def test_monitor_options(arg):
+def test_monitor_options(arg, config):
     """-m, --monitor 옵션이 주기적으로 정상 출력을 내보내는지 테스트합니다."""
     dxrt_device_count = get_dxrt_device_count()
     expected_npu_count_for_monitor = dxrt_device_count * 3
 
-    command = [CONFIG["EXECUTABLE"], arg, "1"]
+    command = [config['EXECUTABLE'], arg, '1']
+    print(f"### Command: {command} ###")
     process = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8'
     )
@@ -133,7 +132,7 @@ def test_monitor_options(arg):
         timeout = 10
 
         header = process.stdout.readline()
-        assert CONFIG["CURRENT_VERSIONS"]["CLI"] in header
+        assert config['CURRENT_VERSIONS']['CLI'] in header
 
         for line in process.stdout:
             if time.time() - start_time > timeout:
@@ -155,27 +154,31 @@ def test_monitor_options(arg):
         except subprocess.TimeoutExpired:
             process.kill()
 
-def test_firmware_update_scenario():
-    """펌웨어 다운그레이드 후 다시 업그레이드하는 전체 시나리오를 테스트합니다."""
-    latest_fw_version = CONFIG["CURRENT_VERSIONS"]["FIRMWARE"]
-    latest_fw_path = CONFIG["FIRMWARE_FILES"]["LATEST"]
-    old_fw_version = CONFIG["MINIMUM_VERSIONS"]["FIRMWARE"]
-    old_fw_path = CONFIG["FIRMWARE_FILES"]["OLD"]
 
-    initial_version = get_current_fw_version()
+@pytest.mark.smoke
+@pytest.mark.normal
+@pytest.mark.stress
+def test_firmware_update_scenario(rt_base_path, config):
+    """펌웨어 다운그레이드 후 다시 업그레이드하는 전체 시나리오를 테스트합니다."""
+    latest_fw_version = config["CURRENT_VERSIONS"]["FIRMWARE"]
+    latest_fw_path = config["FIRMWARE_FILES"]["LATEST"]
+    old_fw_version = config["MINIMUM_VERSIONS"]["FIRMWARE"]
+    old_fw_path = f"{rt_base_path}/{config['FIRMWARE_FILES']['OLD']}"
+
+    initial_version = get_current_fw_version(config)
     if initial_version != latest_fw_version:
         run_command(["-u", latest_fw_path, "force"])
-        time.sleep(5)
-        initial_version = get_current_fw_version()
+        time.sleep(10)
+        initial_version = get_current_fw_version(config)
     assert initial_version == latest_fw_version
 
-    assert "SUCCESS" in run_command(["-u", old_fw_path, "force"])
+    assert "SUCCESS" in run_command(f"config{['EXECUTABLE']} -u {old_fw_path} force")
     time.sleep(5)
-    assert get_current_fw_version() == old_fw_version
+    assert get_current_fw_version(config) == old_fw_version
 
     assert "SUCCESS" in run_command(["-u", latest_fw_path])
     time.sleep(5)
-    assert get_current_fw_version() == latest_fw_version
+    assert get_current_fw_version(config) == latest_fw_version
 
 @pytest.mark.parametrize("arg", ["-g", "--fwversion"])
 def test_get_fw_version_options(arg):

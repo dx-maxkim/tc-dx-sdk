@@ -1,0 +1,17 @@
+
+EXECUTABLE: dxrt-cli
+
+CURRENT_VERSIONS:
+  CLI: v3.0.0
+  RT_DRIVER: v1.7.1
+  PCIE_DRIVER: v1.4.1
+  FIRMWARE: v2.1.4
+
+MINIMUM_VERSIONS:
+  FIRMWARE: v2.1.0
+  COMPILER: v1.18.1
+  DXNN_FORMAT: "v6"
+
+FIRMWARE_FILES:
+  LATEST: dx_fw/m1/2.1.4/mdot2/fw.bin
+  OLD:    dx_fw/m1/2.1.0/mdot2/fw.bin
