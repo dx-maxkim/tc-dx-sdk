@@ -39,4 +39,4 @@ runmodel_help_required:
   - "-h, --help"
 
 runmodel_benchmark:
-  model_path: workspace/res/models/models-2_0_0/YoloV7.dxnn
+  default_model_path: workspace/res/models/models-2_0_0/YoloV7.dxnn

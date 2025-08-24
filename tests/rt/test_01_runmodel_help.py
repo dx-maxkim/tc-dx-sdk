@@ -9,7 +9,7 @@ import pathlib
 @pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
-def test_help_options(config, run_cmd):
+def test_runmodel_help(config, run_cmd):
     """-h 와 --help 옵션이 모두 동일하게 동작하는지 테스트합니다."""
 
     for arg in ["-h", "--help"]:
