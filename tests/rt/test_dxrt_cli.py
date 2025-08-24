@@ -60,7 +60,7 @@ def test_help_options(arg, config):
     cmd_str = config['EXECUTABLE'] + ' ' + arg
     output_text = _run_command(cmd_str)
     required_items = [
-        f"DXRT {config['CURRENT_VERSIONS']['CLI']}", "-s", "-m", "-r", "-d", "-u",
+        f"DXRT {config['CURRENT_VERSIONS']['DXRT']}", "-s", "-m", "-r", "-d", "-u",
         "-g", "-C", "-v", "-h"
     ]
     for item in required_items:
@@ -76,7 +76,7 @@ def test_status_options(arg, config):
     cmd_str = config['EXECUTABLE'] + ' ' + arg
     output_text = _run_command(cmd_str)
     versions = config['CURRENT_VERSIONS']
-    assert versions['CLI'] in output_text.splitlines()[0]
+    assert versions['DXRT'] in output_text.splitlines()[0]
     assert f"RT Driver version   : {versions['RT_DRIVER']}" in output_text
     assert f"PCIe Driver version : {versions['PCIE_DRIVER']}" in output_text
     assert f"FW version          : {versions['FIRMWARE']}" in output_text
@@ -116,7 +116,7 @@ def test_monitor_options(arg, config):
         timeout = 10
 
         header = process.stdout.readline()
-        assert config['CURRENT_VERSIONS']['CLI'] in header
+        assert config['CURRENT_VERSIONS']['DXRT'] in header
 
         for line in process.stdout:
             if time.time() - start_time > timeout:
@@ -178,7 +178,7 @@ def test_get_fw_version_options(arg, rt_base_path, config):
     expected_version_str = config["CURRENT_VERSIONS"]["FIRMWARE"].replace('v', '')
 
     output_text = _run_command(f"{config['EXECUTABLE']} {arg} {fw_path_to_test}")
-    assert config["CURRENT_VERSIONS"]["CLI"] in output_text
+    assert config["CURRENT_VERSIONS"]["DXRT"] in output_text
     assert "FW Binary Information" in output_text
     assert f"fwFile:{fw_path_to_test}" in output_text
 
@@ -200,7 +200,7 @@ def test_version_options(arg, config):
     current_versions = config["CURRENT_VERSIONS"]
     min_versions = config["MINIMUM_VERSIONS"]
 
-    assert current_versions["CLI"] in output_text
+    assert current_versions["DXRT"] in output_text
     assert f"Device Driver: {current_versions['RT_DRIVER']}" in output_text
     assert f"PCIe Driver: {current_versions['PCIE_DRIVER']}" in output_text
     assert f"Firmware: {min_versions['FIRMWARE']}" in output_text

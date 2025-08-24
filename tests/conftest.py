@@ -34,6 +34,7 @@ def pytest_addoption(parser):
         ("rt_base_path", "The base path to the dx_rt under test"),    
         ("com_base_path", "The base path to the dx_com under test"),    
         ("stream_base_path", "The base path to the dx_stream under test"),    
+        ("all_suite_path", "The base path to the dx-all-suite under test"),    
     ]
 
     for option, help_txt in custom_options:
@@ -108,6 +109,25 @@ def stream_base_path(request):
         pytest.fail(f"pytest.ini에 지정된 애플리케이션 경로를 찾을 수 없습니다: {path}")
     return path
 
+
+@pytest.fixture(scope="session")
+def all_suite_path(request):
+    """
+    pytest.ini 파일에서 dx-all-suite 기본 경로를 읽어와 반환하는 Fixture
+    """
+    # 1. pytest.ini 파일로부터 'all_suite_path' 값 읽기
+    path = request.config.getini("all_suite_path")
+
+    # 2. 경로 유효성 검사
+    if not path:
+        pytest.fail("'all_suite_path'가 pytest.ini 파일에 정의되지 않았습니다.")
+    if not os.path.isdir(path):
+        pytest.fail(f"pytest.ini에 지정된 애플리케이션 경로를 찾을 수 없습니다: {path}")
+    return path
+
+
+# @pytest.hookimpl(hookwrapper=True) 데코레이터를 추가하고 함수 내용을 수정합니다.
+@pytest.hookimpl(hookwrapper=True)
 
 # @pytest.hookimpl(hookwrapper=True) 데코레이터를 추가하고 함수 내용을 수정합니다.
 @pytest.hookimpl(hookwrapper=True)

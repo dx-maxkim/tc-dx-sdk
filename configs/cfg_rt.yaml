@@ -1,8 +1,10 @@
-
+######################
+# Common parts
+# ####################
 EXECUTABLE: dxrt-cli
 
 CURRENT_VERSIONS:
-  CLI: v3.0.0
+  DXRT: v3.0.0
   RT_DRIVER: v1.7.1
   PCIE_DRIVER: v1.4.1
   FIRMWARE: v2.1.4
@@ -15,3 +17,26 @@ MINIMUM_VERSIONS:
 FIRMWARE_FILES:
   LATEST: dx_fw/m1/2.1.4/mdot2/fw.bin
   OLD:    dx_fw/m1/2.1.0/mdot2/fw.bin
+
+
+#####################
+# Each TC
+# ###################
+runmodel_help_required:
+  - "-m, --model"
+  - "-i, --input"
+  - "-o, --output"
+  - "-b, --benchmark"
+  - "-s, --single"
+  - "-v, --verbose"
+  - "-n, --npu"
+  - "-l, --loops"
+  - "-t, --time"
+  - "-d, --devices"
+  - "-f, --fps"
+  - "--skip-io"
+  - "--use-ort"
+  - "-h, --help"
+
+runmodel_benchmark:
+  model_path: workspace/res/models/models-2_0_0/YoloV7.dxnn
