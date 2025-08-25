@@ -1,0 +1,13 @@
+######################
+# Common parts
+######################
+
+
+#####################
+# Each TC
+#####################
+getting_start:
+  step1: getting-start/compiler-1_download_onnx.sh
+  step2: getting-start/compiler-2_setup_calibration_dataset.sh
+  step3: getting-start/compiler-3_setup_output_path.sh
+  step4: getting-start/compiler-4_model_compile.sh
