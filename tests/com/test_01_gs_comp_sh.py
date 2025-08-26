@@ -9,7 +9,7 @@ from pathlib import Path
 @pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
-def test_run_imagenet_from_config(all_suite_path, config, run_cmd):
+def test_com_getting_start(all_suite_path, config, run_cmd):
     """
     dx-all-suite 에 있는 DX-Compiler getting-start script 를 실행 후 정상동작 확인
     - compiler-1_download_onnx.sh
