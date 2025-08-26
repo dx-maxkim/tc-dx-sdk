@@ -210,3 +210,15 @@ def test_version_options(arg, config, run_cmd):
     assert f"Firmware: {min_versions['FIRMWARE']}" in output_text
     assert f"Compiler: {min_versions['COMPILER']}" in output_text
     assert f".dxnn File Format: {min_versions['DXNN_FORMAT']}" in output_text
+
+
+@pytest.mark.smoke
+@pytest.mark.normal
+@pytest.mark.stress
+@pytest.mark.parametrize("arg", ["-r", "--reset"])
+def test_reset_options(arg, config, run_cmd):
+    """-r 와 --reset 옵션이 모두 동일하게 동작하는지 테스트합니다."""
+    cmd_str = f"{config['EXECUTABLE']} {arg} 0"
+    output_text = run_cmd(cmd_str)
+    assert f"Device reset is complete" in output_text
+

@@ -68,6 +68,10 @@ It offers both full and smoke tests across four key modules: APP, COM, RT, and S
 
     # DX COM test
     pytest tests/com
+
+    # One function test 
+    # - example: tests/rt/test_dxrt_cli.py -> test_reset_options
+    pytest tests/rt/test_dxrt_cli.py -k test_reset_options -s
     ```
 
 ### General Options:
