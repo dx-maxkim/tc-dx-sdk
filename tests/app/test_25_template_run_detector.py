@@ -17,6 +17,11 @@ def test_run_detector_from_config(app_base_path, config):
     cfg = config['run_detector_test'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
     command_str = cfg.get('command')
     expected_output = cfg.get('expected_output')
+    result_file1 = pathlib.Path(cfg.get('expected_result1'))
+    result_file2 = pathlib.Path(cfg.get('expected_result2'))
+    result_file3 = pathlib.Path(cfg.get('expected_result3'))
+    result_file4 = pathlib.Path(cfg.get('expected_result4'))
+    result_file5 = pathlib.Path(cfg.get('expected_result5'))
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not command_str or not expected_output:
@@ -38,11 +43,19 @@ def test_run_detector_from_config(app_base_path, config):
         )
         output = result.stdout
 
-        # 각 핵심 라인이 전체 출력(output)에 포함되어 있는지 확인
-        for expected_line in expected_output:
-            # 각 라인의 앞뒤 공백을 제거하고 비교하여 안정성을 높입니다.
-            assert expected_line.strip() in output.replace(" ", ""), \
-                   f"기대 결과('{expected_line}')가 출력에 없습니다.\n전체 출력:\n{output}"
+        # 표준 출력(output)에 기대하는 문자열(expected_output)이 포함되어 있는지 확인합니다.
+        assert expected_output in output, \
+            f"기대 결과('{expected_output}')가 출력에 없습니다.\n전체 출력:\n{output}"
+
+        # 삭제하여 테스트 환경을 깨끗하게 합니다.
+        if result_file1.exists():
+            output_dir = pathlib.Path(f"{bk_path}/output")
+            output_dir.mkdir(exist_ok=True)
+            result_file1.rename(f"{bk_path}/output/run_det_{cfg.get('expected_result1')}")
+        if result_file2.exists(): result_file2.rename(f"{bk_path}/output/run_det_{cfg.get('expected_result2')}")
+        if result_file3.exists(): result_file3.rename(f"{bk_path}/output/run_det_{cfg.get('expected_result3')}")
+        if result_file4.exists(): result_file4.rename(f"{bk_path}/output/run_det_{cfg.get('expected_result4')}")
+        if result_file5.exists(): result_file5.rename(f"{bk_path}/output/run_det_{cfg.get('expected_result5')}")
 
     except FileNotFoundError:
         pytest.fail(f"실행 파일을 찾을 수 없습니다: '{command_parts}'. 경로를 확인해주세요.")
@@ -59,5 +72,15 @@ def test_run_detector_from_config(app_base_path, config):
 
     finally:
         os.chdir(bk_path)
+        result_image_path1 = f"{bk_path}/output/run_det_{cfg.get('expected_result1')}"
+        result_image_path2 = f"{bk_path}/output/run_det_{cfg.get('expected_result2')}"
+        result_image_path3 = f"{bk_path}/output/run_det_{cfg.get('expected_result3')}"
+        result_image_path4 = f"{bk_path}/output/run_det_{cfg.get('expected_result4')}"
+        result_image_path5 = f"{bk_path}/output/run_det_{cfg.get('expected_result5')}"
+        if os.path.exists(result_image_path1): subprocess.Popen(['xdg-open', str(result_image_path1)])
+        if os.path.exists(result_image_path2): subprocess.Popen(['xdg-open', str(result_image_path2)])
+        if os.path.exists(result_image_path3): subprocess.Popen(['xdg-open', str(result_image_path3)])
+        if os.path.exists(result_image_path4): subprocess.Popen(['xdg-open', str(result_image_path4)])
+        if os.path.exists(result_image_path5): subprocess.Popen(['xdg-open', str(result_image_path5)])
 
 
