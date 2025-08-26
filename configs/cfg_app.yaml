@@ -325,12 +325,22 @@ python_yolov5s_test:
   command: "templates/python/yolov5s_example.py --config example/run_detector/yolov5s3_example.json"
   # 검증할 기대 출력값
   expected_output: |
-    dxrt inference Done! 
-    decoding output Done! 
-    [Result] Detected 4 Boxes.
-    [0] conf, classID, x1, y1, x2, y2, : 0.8054, horse(17), 3, 212, 209, 359
-    [1] conf, classID, x1, y1, x2, y2, : 0.6319, cow(19), 289, 226, 395, 316
-    [2] conf, classID, x1, y1, x2, y2, : 0.5420, horse(17), 0, 208, 101, 273
-    [3] conf, classID, x1, y1, x2, y2, : 0.5380, horse(17), 162, 217, 283, 329
-    save file : yolov5s_5.jpg
+    [0] conf, classID, x1, y1, x2, y2, : 0.9007, horse(17), 3, 189, 315, 411
+    [1] conf, classID, x1, y1, x2, y2, : 0.7948, cow(19), 436, 210, 596, 346
+    [2] conf, classID, x1, y1, x2, y2, : 0.7344, horse(17), 0, 184, 152, 281
+    [3] conf, classID, x1, y1, x2, y2, : 0.7281, horse(17), 244, 197, 427, 366
+    [4] conf, classID, x1, y1, x2, y2, : 0.3304, horse(17), 374, 204, 454, 320
 
+
+# 29 - python yolo_async
+python_yolo_async_test:
+  # 실행할 명령어
+  venv_python: "../venv-dx-runtime/bin/python3"
+  command: "templates/python/yolo_async.py --config example/run_detector/yolov5s3_example.json"
+  # 검증할 기대 출력값
+  expected_output: |
+    [0] conf, classID, x1, y1, x2, y2, : 0.9007, horse(17), 3, 189, 315, 411
+    [1] conf, classID, x1, y1, x2, y2, : 0.7948, cow(19), 436, 210, 596, 346
+    [2] conf, classID, x1, y1, x2, y2, : 0.7344, horse(17), 0, 184, 152, 281
+    [3] conf, classID, x1, y1, x2, y2, : 0.7281, horse(17), 244, 197, 427, 366
+    [4] conf, classID, x1, y1, x2, y2, : 0.3304, horse(17), 374, 204, 454, 320

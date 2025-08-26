@@ -7,14 +7,14 @@ import pathlib
 @pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
-def test_run_yolov5s_from_config(app_base_path, config):
+def test_run_yolo_async_from_config(app_base_path, config):
     """
-    yolov5s_example.py 실행하고 결과를 검증
+    yolo_async.py 실행하고 결과를 검증
     - Pass: 문제없이 수행되고 예상되는 결과를 출력
     - Fail: 동작을 안하거나 예상된 결과와 다른 결과를 출력
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['python_yolov5s_test'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
+    cfg = config['python_yolo_async_test'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
     target_venv_python = cfg.get('venv_python')
     command_str = cfg.get('command')
     expected_output = cfg.get('expected_output')
