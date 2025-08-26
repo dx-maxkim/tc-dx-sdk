@@ -75,7 +75,7 @@ def test_yolo_from_config(app_base_path, timeout_sec, config):
 
         combined_output = stdout + stderr
         error_indicators = [
-            "can't open camera"
+            "can't open camera",
             "Error:",
             "File not found exception",
             "can't open/read file",

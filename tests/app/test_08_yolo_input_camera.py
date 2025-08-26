@@ -7,9 +7,9 @@ import time
 import signal
 
 @pytest.mark.parametrize("timeout_sec", [
-    pytest.param(5, marks=pytest.mark.smoke),
-    pytest.param(10, marks=pytest.mark.normal),
-    pytest.param(60, marks=pytest.mark.stress),
+    pytest.param(10, marks=pytest.mark.smoke),
+    pytest.param(20, marks=pytest.mark.normal),
+    pytest.param(120, marks=pytest.mark.stress),
 ])
 def test_yolo_from_config(app_base_path, timeout_sec, config):
     """
@@ -59,7 +59,7 @@ def test_yolo_from_config(app_base_path, timeout_sec, config):
 
         combined_output = stdout + stderr
         error_indicators = [
-            "can't open camera"
+            "can't open camera",
             "Error:",
             "File not found exception",
             "can't open/read file",

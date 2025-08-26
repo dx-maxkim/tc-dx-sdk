@@ -19,16 +19,19 @@ def get_test_ids(test_cases):
     """테스트 케이스의 'name'을 pytest ID로 사용합니다."""
     return [case['name'] for case in test_cases]
 
-# @pytest.mark.parametrize 데코레이터 추가
+
+# test mode 에 따라 aging count 변화: 1 / 10 / 1000
+@pytest.mark.parametrize("repeat_cnt", [
+    pytest.param(1, marks=pytest.mark.smoke),
+    pytest.param(10, marks=pytest.mark.normal),
+    pytest.param(1000, marks=pytest.mark.stress),
+])
 @pytest.mark.parametrize(
     "test_case",                # 테스트 함수에 전달될 인자 이름
     load_config(),              # 인자에 주입될 데이터 (테스트 케이스 리스트)
     ids=get_test_ids(load_config()) # 각 테스트를 구별할 ID
 )
-@pytest.mark.smoke
-@pytest.mark.normal
-@pytest.mark.stress
-def test_imagenet_classification_from_config(app_base_path, test_case):
+def test_yolo_aging_from_config(app_base_path, test_case, repeat_cnt):
     """
     yolo 어플리케이션을 파일에 정의된 model 을 사용해서 수행 후 결과 검증 (Input: image)
     - Pass: 문제없이 수행되고 종료 시 결과 파일 <model name>_result.jpg 파일을 output 폴더에 저장
@@ -53,23 +56,24 @@ def test_imagenet_classification_from_config(app_base_path, test_case):
 
     # 예외 처리를 포함하여 명령어를 실행합니다.
     try:
-        result = subprocess.run(
-            command_parts,
-            capture_output=True,
-            text=True,
-            check=True,
-            timeout=60
-        )
-        output = result.stdout
+        for run_cnt in range(repeat_cnt):
+            result = subprocess.run(
+                command_parts,
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=60
+            )
+            output = result.stdout
 
-        print(f"'{result_file}' 파일의 존재를 확인합니다.")
-        assert result_file.is_file(), f"PASS 조건 실패: '{result_file}' 파일이 생성되지 않았습니다."
+            print(f"'{test_case.get('name')}' 을 image input 으로 추론 성공 - {run_cnt+1}번째 확인")
+            assert result_file.is_file(), f"PASS 조건 실패: '{result_file}' 파일이 생성되지 않았습니다."
 
-        # 삭제하여 테스트 환경을 깨끗하게 합니다.
-        if result_file.exists():
-            output_dir = pathlib.Path(f"{bk_path}/output")
-            output_dir.mkdir(exist_ok=True)
-            result_file.rename(f"{bk_path}/output/{test_case.get('name')}_{test_case.get('expected_result')}")
+            # 삭제하여 테스트 환경을 깨끗하게 합니다.
+            if result_file.exists():
+                output_dir = pathlib.Path(f"{bk_path}/output")
+                output_dir.mkdir(exist_ok=True)
+                result_file.rename(f"{bk_path}/output/{test_case.get('name')}_{test_case.get('expected_result')}")
 
     except FileNotFoundError:
         pytest.fail(f"실행 파일을 찾을 수 없습니다: '{command_parts}'. 경로를 확인해주세요.")
@@ -85,5 +89,3 @@ def test_imagenet_classification_from_config(app_base_path, test_case):
 
     finally:
         os.chdir(bk_path)
-
-

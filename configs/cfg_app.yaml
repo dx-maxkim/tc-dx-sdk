@@ -134,7 +134,7 @@ yolo_image:
 # 07 - yolo with video
 yolo_video:
   # 실행할 명령어
-  command: "bin/yolo -m assets/models/YOLOv7_512.dxnn -v assets/videos/boat.mp4 -l -p 3"
+  command: "bin/yolo -m assets/models/YOLOV5S_3.dxnn -v assets/videos/boat.mp4 -l -p 1"
 
 
 # 08 - yolo with camera
@@ -194,7 +194,7 @@ pose_camera:
   command: "bin/pose -m assets/models/YOLOV5Pose640_1.dxnn -c -p 0"
 
 
-# 16 - segmentation with image
+# 16 -segmentation with image
 segmentation_image:
   # 실행할 명령어
   command: "bin/segmentation -m assets/models/DeepLabV3PlusMobileNetV2_2.dxnn -i sample/8.jpg"
