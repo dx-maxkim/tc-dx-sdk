@@ -5,6 +5,7 @@ import os
 import pathlib
 import time
 import signal
+import re
 
 @pytest.mark.parametrize("timeout_sec", [
     pytest.param(10, marks=pytest.mark.smoke),
@@ -69,6 +70,14 @@ def test_yolo_from_config(app_base_path, timeout_sec, config):
         for err in error_indicators:
             if err in combined_output:
                 pytest.fail(f"실행 중 오류 발생: '{err}'")
+
+        # 패턴 설명: '[DXAPP] [INFO] fps: ' 뒤에 오는 숫자(\d)나 점(.)을 캡처
+        match = re.search(r"\[DXAPP\] \[INFO\] fps : ([\d.]+)", combined_output)
+        if match:
+            pytest.fail("Expected FPS output line was not found.")
+            fps = float(match.group(1))
+            # FPS 값이 25보다 큰지 assert로 확인. 실패 시 메시지 출력
+            assert fps > 25, f"FPS check failed: {fps} is not greater than 25."
 
         # 5. 프로세스가 실제로 종료될 때까지 최대 10초 대기
         process.wait(timeout=10)
