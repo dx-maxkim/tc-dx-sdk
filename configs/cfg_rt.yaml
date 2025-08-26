@@ -44,3 +44,33 @@ runmodel_benchmark:
 
 python_package:
   venv_python: "venv-dx-runtime"
+
+parse_model:
+  model_path: workspace/res/models/models-2_0_0/YoloV7.dxnn
+  expected_output: |
+    Model Input Tensors:
+      - images
+    Model Output Tensors:
+      - output
+
+    Tasks:
+      [ ] -> npu_0 -> [cpu_0]
+      Task[0] npu_0, NPU, NPU memory usage 241,984,000 bytes (input 1,228,800, output 8,568,000)
+      Inputs
+         -  images, UINT8, [1, 640, 640, 3 ]  [layout: PRE_IM2COL]
+      Outputs
+         -  onnx::Reshape_491, FLOAT, [1, 255, 80, 80 ]  [layout: ALIGNED, transpose: CHANNEL_LAST_TO_FIRST]
+         -  onnx::Reshape_525, FLOAT, [1, 255, 40, 40 ]  [layout: ALIGNED, transpose: CHANNEL_LAST_TO_FIRST]
+         -  onnx::Reshape_559, FLOAT, [1, 255, 20, 20 ]  [layout: ALIGNED, transpose: CHANNEL_LAST_TO_FIRST]
+
+      [ npu_0] -> cpu_0 -> []
+      Task[1] cpu_0, CPU, input 8,568,000 bytes, output 8,568,000 bytes
+      Inputs
+         -  onnx::Reshape_491, FLOAT, [1, 255, 80, 80 ]
+         -  onnx::Reshape_525, FLOAT, [1, 255, 40, 40 ]
+         -  onnx::Reshape_559, FLOAT, [1, 255, 20, 20 ]
+      Outputs
+         -  output, FLOAT, [1, 25200, 85 ]
+
+bin_examples:
+  model_path: workspace/res/models/models-2_0_0/YoloV7.dxnn
