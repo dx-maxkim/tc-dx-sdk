@@ -9,7 +9,7 @@ import pathlib
 @pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
-def test_runmodel_help(config, run_cmd, rt_base_path):
+def test_sanity_check(config, run_cmd, rt_base_path):
     """
     SanityCheck.sh 가 정상 동작하는지 확인하는 테스트
     - Pass: Test 결과가 모두 OK, 결과 리포트도 잘 생성

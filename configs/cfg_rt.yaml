@@ -41,3 +41,6 @@ runmodel_help_required:
 
 runmodel_benchmark:
   default_model_path: workspace/res/models/models-2_0_0/YoloV7.dxnn
+
+python_package:
+  venv_python: "venv-dx-runtime"
