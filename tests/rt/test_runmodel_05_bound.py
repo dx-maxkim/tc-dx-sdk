@@ -5,6 +5,7 @@ import subprocess
 import shlex
 
 
+@pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
 def test_runmodel_bound_single(all_suite_path, config, run_cmd):

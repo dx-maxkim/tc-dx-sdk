@@ -17,7 +17,7 @@ def test_runmodel_help(config, run_cmd):
         output_text = run_cmd(cmd_str)
 
         # 버전 확인
-        assert f"Runtime Framework Version: {config['CURRENT_VERSIONS']['DXRT']}" in output_text
+        assert f"Runtime Framework Version: {config['CURRENT_VERSIONS']['DX_RT']}" in output_text
         assert f"Device Driver Version: {config['CURRENT_VERSIONS']['RT_DRIVER']}" in output_text
         assert f"PCIe Driver Version: {config['CURRENT_VERSIONS']['PCIE_DRIVER']}" in output_text
 
