@@ -257,12 +257,36 @@ run_detector_test:
   command: "bin/run_detector -c example/run_detector/yolov5s3_example.json"
   # 검증할 기대 출력값
   expected_output: |
-    save file : result-appface_sample.jpg
+    save file : result-app1.jpg
     save file : result-app2.jpg
     save file : result-app3.jpg
     save file : result-app4.jpg
     save file : result-app5.jpg
-     detector application End.
+  # 저장될 파일들
+  expected_result1: "result-app1.jpg"
+  expected_result2: "result-app2.jpg"
+  expected_result3: "result-app3.jpg"
+  expected_result4: "result-app4.jpg"
+  expected_result5: "result-app5.jpg"
+  # 단순 실행 검증
+  command_extra_01: "bin/run_detector -c example/run_detector/scrfd_example.json"
+  command_extra_02: "bin/run_detector -c example/run_detector/scrfd_realtime_example.json"
+  command_extra_03: "bin/run_detector -c example/run_detector/yolo_face_example.json"
+  command_extra_04: "bin/run_detector -c example/run_detector/yolo_face_realtime_example.json"
+  command_extra_05: "bin/run_detector -c example/run_detector/yolopose_example.json"
+  command_extra_06: "bin/run_detector -c example/run_detector/yolopose_realtime_example.json"
+  command_extra_07: "bin/run_detector -c example/run_detector/yolov5s1_example.json"
+  command_extra_08: "bin/run_detector -c example/run_detector/yolov5s3_example.json"
+  command_extra_09: "bin/run_detector -c example/run_detector/yolov5s3_multi_input_source_example.json"
+  command_extra_10: "bin/run_detector -c example/run_detector/yolov5s3_realtime_example.json"
+  command_extra_11: "bin/run_detector -c example/run_detector/yolov7_example.json"
+  command_extra_12: "bin/run_detector -c example/run_detector/yolov7_realtime_example.json"
+  command_extra_13: "bin/run_detector -c example/run_detector/yolov8n_example.json"
+  command_extra_14: "bin/run_detector -c example/run_detector/yolov8n_realtime_example.json"
+  command_extra_15: "bin/run_detector -c example/run_detector/yolov9s_example.json"
+  command_extra_16: "bin/run_detector -c example/run_detector/yolov9s_realtime_example.json"
+  command_extra_17: "bin/run_detector -c example/run_detector/yolox_example.json"
+  command_extra_18: "bin/run_detector -c example/run_detector/yolox_realtime_example.json"
 
 
 # 26 - dxengine_install
