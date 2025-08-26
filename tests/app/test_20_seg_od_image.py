@@ -24,7 +24,7 @@ def test_seg_od_from_config(app_base_path, config):
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not command_str or not result_file:
-        pytest.fail("config_20.yaml 파일에 'command' 또는 'expected_result' 키가 없습니다.")
+        pytest.fail("config 파일에 'command' 또는 'expected_result' 키가 없습니다.")
 
     command_parts = shlex.split(command_str)
 
@@ -49,7 +49,7 @@ def test_seg_od_from_config(app_base_path, config):
         if result_file.exists():
             output_dir = pathlib.Path(f"{bk_path}/output")
             output_dir.mkdir(exist_ok=True)
-            result_file.rename(f"{bk_path}/output/seg_od_{config.get('expected_result')}")
+            result_file.rename(f"{bk_path}/output/seg_od_{cfg.get('expected_result')}")
 
     except FileNotFoundError:
         pytest.fail(f"실행 파일을 찾을 수 없습니다: '{command_parts}'. 경로를 확인해주세요.")
@@ -66,4 +66,6 @@ def test_seg_od_from_config(app_base_path, config):
 
     finally:
         os.chdir(bk_path)
-
+        result_image_path = f"{bk_path}/output/seg_od_{cfg.get('expected_result')}"
+        if os.path.exists(result_image_path):
+            subprocess.Popen(['xdg-open', str(result_image_path)])

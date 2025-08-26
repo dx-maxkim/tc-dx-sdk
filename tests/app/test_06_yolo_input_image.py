@@ -89,3 +89,6 @@ def test_yolo_aging_from_config(app_base_path, test_case, repeat_cnt):
 
     finally:
         os.chdir(bk_path)
+        result_image_path = f"{bk_path}/output/{test_case.get('name')}_{test_case.get('expected_result')}"
+        if os.path.exists(result_image_path):
+            subprocess.Popen(['xdg-open', str(result_image_path)])

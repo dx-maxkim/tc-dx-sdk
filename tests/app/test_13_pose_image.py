@@ -49,7 +49,7 @@ def test_pose_from_config(app_base_path, config):
         if result_file.exists():
             output_dir = pathlib.Path(f"{bk_path}/output")
             output_dir.mkdir(exist_ok=True)
-            result_file.rename(f"{bk_path}/output/pose_{config.get('expected_result')}")
+            result_file.rename(f"{bk_path}/output/pose_{cfg.get('expected_result')}")
 
     except FileNotFoundError:
         pytest.fail(f"실행 파일을 찾을 수 없습니다: '{command_parts}'. 경로를 확인해주세요.")
@@ -66,3 +66,6 @@ def test_pose_from_config(app_base_path, config):
 
     finally:
         os.chdir(bk_path)
+        result_image_path = f"{bk_path}/output/pose_{cfg.get('expected_result')}"
+        if os.path.exists(result_image_path):
+            subprocess.Popen(['xdg-open', str(result_image_path)])

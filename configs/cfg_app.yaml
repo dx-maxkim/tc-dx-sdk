@@ -76,6 +76,11 @@ classification_image:
   # 검증할 기대 출력값
   expected_output: "Top1 Result : class 321"
 
+  # 실행할 명령어
+  command_async: "bin/classification_async -m assets/models/MobileNetV2_2.dxnn -i sample/ILSVRC2012/1.jpeg -l 300"
+  # 검증할 최소 FPS
+  minimum_fps: 2500
+
 
 # 05 - classification with several images
 imagenet_classification_images:
