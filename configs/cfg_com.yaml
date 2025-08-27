@@ -20,6 +20,9 @@ basic_cmd:
   cmd3: dx_com/dx_com -m sample/YOLOV5-1.onnx -c sample/YOLOV5-1.json -o output/YOLOV5-1
   out3: output/YOLOV5-1/YOLOV5-1.dxnn
   timeout: 180 # ResNet50 compile time < 3 mins
+  logfile: output/MobileNetV1/main_log.bin
+  dxnn_format_version: v7
+  compiler_version: v2.0.0
 
 dx_com_info: |
   dx_codegen  : 2.33.1

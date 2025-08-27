@@ -2,6 +2,7 @@ import subprocess
 import pytest
 import os
 import shutil
+import re
 from pathlib import Path
 
 
@@ -51,7 +52,7 @@ def test_com_basic_command(com_base_path, config, run_cmd):
 @pytest.mark.smoke
 @pytest.mark.normal
 @pytest.mark.stress
-def test_com_basic_shrink_acommand(com_base_path, config, run_cmd):
+def test_com_basic_shrink_command(com_base_path, config, run_cmd):
     """
     dx_com 의 기본 명령어로 compile 이 --shrink 로 잘 동작하는지 확인
     - Pass: 정상적으로 dxnn 파일이 생성되며 shrink 옵션이 없을때와 파일 사이즈 차이 20% 이상 확인 확인
@@ -115,3 +116,75 @@ def test_com_basic_shrink_acommand(com_base_path, config, run_cmd):
 
     if errors:
         pytest.fail("\n".join(errors))
+
+
+@pytest.mark.timeout(60*10) # 10 min timeout for this test
+@pytest.mark.smoke
+@pytest.mark.normal
+@pytest.mark.stress
+def test_com_basic_genlog_command(com_base_path, config, run_cmd):
+    """
+    dx_com 의 기본 명령어로 compile 이 --gen_log 로 잘 동작하고 main_log.bin 파일이 잘 생성됐는지 확인
+    - Pass: 정상적으로 dxnn 파일이 생성되며, main_log.bin 이 잘 생성됨
+    - Fail: 동작이 되지 않거나 로그파일 미생성
+    """
+    # YAML 파일에서 설정 정보를 불러옵니다.
+    cfg = config['basic_cmd']
+    cmd = cfg.get('cmd1')
+    outfile = cfg.get('out1')
+    logfile = cfg.get('logfile')
+
+    # 실행 전 output 파일들 있을경우 삭제
+    out_path = Path(f"{com_base_path}/dx_com") / outfile
+    log_path = Path(f"{com_base_path}/dx_com") / logfile
+    if out_path.exists(): out_path.unlink()
+    if log_path.exists(): log_path.unlink()
+
+    cmd_str = f"{cmd} --gen_log"
+    run_cmd(cmd_str, cwd=f"{com_base_path}/dx_com")
+
+    # 파일 생성 확인
+    assert out_path.exists(), f"Output file not found: {out_path}"
+    assert log_path.exists(), f"Output file not found: {log_path}"
+
+    # 생성된 파일 이동
+    dest_dir = Path("output/compile_genlog")
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    shutil.move(str(out_path), dest_dir / out_path.name)
+    print(f"Moved {out_path} → {dest_dir/out_path.name}")
+    shutil.move(str(log_path), dest_dir / log_path.name)
+    print(f"Moved {log_path} → {dest_dir/log_path.name}")
+
+
+@pytest.mark.smoke
+@pytest.mark.normal
+@pytest.mark.stress
+def test_com_parse_model(com_base_path, config, run_cmd):
+    """
+    dx_com 으로 compile 한 dxnn 모델들이 parse_model 로 열어서 디바이스 정보가 잘 나오는지 확인
+    - Pass: dxnn Format version / Compiler version 이 맞게 출력
+    - Fail: 잘못된 값이 출력
+    """
+    # YAML 파일에서 설정 정보를 불러옵니다.
+    cfg = config['basic_cmd']
+    out_list = [ cfg.get('out1'), cfg.get('out2'), cfg.get('out3') ]
+    dxnn_fmt_ver = cfg.get('dxnn_format_version')
+    dxnn_com_ver = cfg.get('compiler_version')
+
+    for out in out_list:
+        out_path = Path("output/compile") / Path(out).name
+        assert out_path.exists(), f"DXNN file not found: {out_path}"
+
+        cmd = f"parse_model -m {out_path}"
+        output = run_cmd(cmd)
+
+        dxnn_match = re.search(r"\.dxnn Format version\s*:\s*(v\S+)", output)
+        compiler_match = re.search(r"Compiler version\s*:\s*(v\S+)", output)
+
+        assert dxnn_fmt_ver == dxnn_match.group(1), \
+                f"dxnn version mismatch: {dxnn_fmt_ver} - {dxnn_match.group(1)}"
+        assert dxnn_com_ver == compiler_match.group(1), \
+                f"dxnn compiler version mismatch: {dxnn_com_ver} - {compiler_match.group(1)}"
+
+        print(f"dxnn version compare: {dxnn_fmt_ver} - {dxnn_match.group(1)}")
+        print(f"compiler version compare: {dxnn_com_ver} - {compiler_match.group(1)}")

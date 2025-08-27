@@ -44,11 +44,14 @@ def run_cmd():
                 timeout=timeout,
             )
             return result.stdout
+
         except FileNotFoundError as e:
             pytest.fail(f"Command not found: {command[0]}\n{e}")
+
         except subprocess.CalledProcessError as e:
             err = e.stderr or e.stdout or str(e)
             pytest.fail(f"Command execution failed for '{' '.join(command)}'\n{err}")
+
         except subprocess.TimeoutExpired as e:
             pytest.fail(f"Command timed out after {timeout}s: {' '.join(command)}\n{e}")
 
