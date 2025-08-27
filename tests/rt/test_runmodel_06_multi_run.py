@@ -16,7 +16,7 @@ def test_runmodel_multi_run(all_suite_path, config, timeout_sec):
     - Fail: 동작을 안하거나 동작 실패
     """
     # 사용할 모델
-    model_path = config['runmodel_benchmark']['default_model_path']
+    model_path = config('rt')['runmodel_benchmark']['default_model_path']
     
 
     # 동시에 실행할 run_model 수

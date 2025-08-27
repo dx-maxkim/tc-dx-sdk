@@ -12,7 +12,7 @@ def test_bin_examples(config, run_cmd, all_suite_path, loop_cnt):
     - Pass: Test 결과가 모두 OK
     - Fail: 원하는 결과가 나오지 않을 경우
     """
-    model_path = f"{all_suite_path}/{config['bin_examples']['model_path']}"
+    model_path = f"{all_suite_path}/{config('rt')['bin_examples']['model_path']}"
     bin_path = f"{all_suite_path}/dx-runtime/dx_rt/bin/examples"
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.

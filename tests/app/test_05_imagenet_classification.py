@@ -18,7 +18,7 @@ def test_imagenet_classification_from_config(app_base_path, timeout_sec, config)
     - Fail: 프로그램이 실행되지 않거나 에러 발생하는 경우
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['imagenet_classification_images'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
+    cfg = config('app')['imagenet_classification_images'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
     command_str = cfg.get('command')
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
@@ -26,9 +26,6 @@ def test_imagenet_classification_from_config(app_base_path, timeout_sec, config)
         pytest.fail("config 파일에 'command' 키가 없습니다.")
 
     command_parts = shlex.split(command_str)
-
-    bk_path = os.getcwd()
-    os.chdir(app_base_path)
 
     process = None
     try:
@@ -38,6 +35,7 @@ def test_imagenet_classification_from_config(app_base_path, timeout_sec, config)
                 command_parts,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
+                cwd=app_base_path,
                 text=True  # ensures output is in string format, not bytes
                 )
         # 2. config 파일에 지정된 시간(초)만큼 대기
@@ -87,7 +85,4 @@ def test_imagenet_classification_from_config(app_base_path, timeout_sec, config)
         if process:
             process.kill()
         pytest.fail(f"테스트 실행 중 예기치 않은 오류 발생: {e}")
-
-    finally:
-        os.chdir(bk_path)
 

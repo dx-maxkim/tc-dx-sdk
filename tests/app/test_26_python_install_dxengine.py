@@ -14,17 +14,14 @@ def test_run_imagenet_from_config(app_base_path, config):
     - Fail:설치가 되지 않거나 예상된 설치 완료 출력문 불일치
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['dxengine_install_test'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
+    cfg = config('app')['dxengine_install_test'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
     expected_output = cfg.get('expected_output')
-    target_venv_python = Path(cfg.get('venv_python'))
-    dxengine_install_path = Path(cfg.get('dxengine_path'))
+    target_venv_python = Path(f"{app_base_path}/{cfg.get('venv_python')}")
+    dxengine_install_path = Path(f"{app_base_path}/{cfg.get('dxengine_path')}")
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not expected_output or not target_venv_python or not dxengine_install_path:
         pytest.fail("config 파일에 'expected_output' or  'target_venv_python' or 'dxengine_install_path' 키가 없습니다.")
-
-    bk_path = os.getcwd()
-    os.chdir(app_base_path)
 
     # Python venv 스크립트가 존재하는지 확인
     assert os.path.exists(dxengine_install_path), f"지정한 파이썬 경로를 찾을 수 없습니다: {dxengine_install_path}"
@@ -75,8 +72,3 @@ def test_run_imagenet_from_config(app_base_path, config):
 
     except subprocess.TimeoutExpired:
         pytest.fail("스크립트 실행 시간이 초과되었습니다.")
-
-    finally:
-        os.chdir(bk_path)
-
-

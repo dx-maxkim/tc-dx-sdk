@@ -20,7 +20,7 @@ def test_com_getting_start(all_suite_path, config, run_cmd):
     - Fail:동작이 되지 않거나 예상된 완료 출력문 불일치
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['getting_start'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
+    cfg = config('com')['getting_start'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
     step1_sh = f"{all_suite_path}/{cfg.get('step1')}"
     step2_sh = f"{all_suite_path}/{cfg.get('step2')}"
     step3_sh = f"{all_suite_path}/{cfg.get('step3')}"

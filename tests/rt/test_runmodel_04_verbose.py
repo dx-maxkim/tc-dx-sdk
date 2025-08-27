@@ -9,7 +9,7 @@ def test_runmodel_vervose(all_suite_path, config, run_cmd):
     """-v 옵션 사용 시 시스템 정보 및 추가 성능 지표가 출력되는지 검증합니다."""
 
     for arg in ["-v", "--verbose"]:
-        model_path = f"{all_suite_path}/{config['runmodel_benchmark']['default_model_path']}"
+        model_path = f"{all_suite_path}/{config('rt')['runmodel_benchmark']['default_model_path']}"
         cmd_str = f"run_model -m {model_path} {arg}"
         output = run_cmd(cmd_str)
 

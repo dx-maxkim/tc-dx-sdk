@@ -44,10 +44,10 @@ def _get_current_fw_version(config, run_cmd):
 @pytest.mark.parametrize("arg", ["-h", "--help"])
 def test_help_options(arg, config, run_cmd):
     """dxrt-cli 의 -h 와 --help 옵션이 모두 동일하게 동작하는지 테스트합니다."""
-    cmd_str = config['EXECUTABLE'] + ' ' + arg
+    cmd_str = config('rt')['EXECUTABLE'] + ' ' + arg
     output_text = run_cmd(cmd_str)
     required_items = [
-        f"DXRT {config['CURRENT_VERSIONS']['DX_RT']}", "-s", "-m", "-r", "-d", "-u",
+        f"DXRT {config('rt')['CURRENT_VERSIONS']['DX_RT']}", "-s", "-m", "-r", "-d", "-u",
         "-g", "-C", "-v", "-h"
     ]
     for item in required_items:
@@ -60,9 +60,9 @@ def test_help_options(arg, config, run_cmd):
 @pytest.mark.parametrize("arg", ["-s", "--status"])
 def test_status_options(arg, config, run_cmd):
     """-s 와 --status 옵션이 모두 동일하게 동작하는지 테스트합니다."""
-    cmd_str = config['EXECUTABLE'] + ' ' + arg
+    cmd_str = config('rt')['EXECUTABLE'] + ' ' + arg
     output_text = run_cmd(cmd_str)
-    versions = config['CURRENT_VERSIONS']
+    versions = config('rt')['CURRENT_VERSIONS']
     assert versions['DX_RT'] in output_text.splitlines()[0]
     assert f"RT Driver version   : {versions['RT_DRIVER']}" in output_text
     assert f"PCIe Driver version : {versions['PCIE_DRIVER']}" in output_text
@@ -87,9 +87,9 @@ def test_status_options(arg, config, run_cmd):
 @pytest.mark.parametrize("arg", ["-i", "--info"])
 def test_info_options(arg, config, run_cmd):
     """-i 와 --info 옵션이 모두 동일하게 동작하는지 테스트합니다."""
-    cmd_str = config['EXECUTABLE'] + ' ' + arg
+    cmd_str = config('rt')['EXECUTABLE'] + ' ' + arg
     output_text = run_cmd(cmd_str)
-    versions = config['CURRENT_VERSIONS']
+    versions = config('rt')['CURRENT_VERSIONS']
     assert versions['DX_RT'] in output_text.splitlines()[0]
     assert f"RT Driver version   : {versions['RT_DRIVER']}" in output_text
     assert f"PCIe Driver version : {versions['PCIE_DRIVER']}" in output_text
@@ -108,7 +108,7 @@ def test_monitor_options(arg, config):
     dxrt_device_count = _get_dxrt_device_count()
     expected_npu_count_for_monitor = dxrt_device_count * 3
 
-    command = [config['EXECUTABLE'], arg, '1']
+    command = [config('rt')['EXECUTABLE'], arg, '1']
     print(f"### Command: {command}")
     process = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8'
@@ -121,7 +121,7 @@ def test_monitor_options(arg, config):
         timeout = 10
 
         header = process.stdout.readline()
-        assert config['CURRENT_VERSIONS']['DX_RT'] in header
+        assert config('rt')['CURRENT_VERSIONS']['DX_RT'] in header
 
         for line in process.stdout:
             if time.time() - start_time > timeout:
@@ -149,27 +149,27 @@ def test_monitor_options(arg, config):
 @pytest.mark.stress
 def test_firmware_update_scenario(rt_base_path, config, run_cmd):
     """펌웨어 다운그레이드 후 다시 업그레이드하는 전체 시나리오를 테스트합니다."""
-    latest_fw_version = config["CURRENT_VERSIONS"]["FIRMWARE"]
-    latest_fw_path = f"{rt_base_path}/{config['FIRMWARE_FILES']['LATEST']}"
-    old_fw_version = config["MINIMUM_VERSIONS"]["FIRMWARE"]
-    old_fw_path = f"{rt_base_path}/{config['FIRMWARE_FILES']['OLD']}"
+    latest_fw_version = config('rt')["CURRENT_VERSIONS"]["FIRMWARE"]
+    latest_fw_path = f"{rt_base_path}/{config('rt')['FIRMWARE_FILES']['LATEST']}"
+    old_fw_version = config('rt')["MINIMUM_VERSIONS"]["FIRMWARE"]
+    old_fw_path = f"{rt_base_path}/{config('rt')['FIRMWARE_FILES']['OLD']}"
 
-    initial_version = _get_current_fw_version(config, run_cmd)
+    initial_version = _get_current_fw_version(config('rt'), run_cmd)
     if initial_version != latest_fw_version:
         print(f"FW update - old({initial_version}), new({latest_fw_version:})")
-        run_cmd(f"{config['EXECUTABLE']}  -u {latest_fw_path} -u force")
+        run_cmd(f"{config('rt')['EXECUTABLE']}  -u {latest_fw_path} -u force")
         time.sleep(5)
-        initial_version = _get_current_fw_version(config, run_cmd)
+        initial_version = _get_current_fw_version(config('rt'), run_cmd)
         print(f"initial_version = {initial_version}")
     assert initial_version == latest_fw_version
 
-    assert "SUCCESS" in run_cmd(f"{config['EXECUTABLE']} -u {old_fw_path} -u force")
+    assert "SUCCESS" in run_cmd(f"{config('rt')['EXECUTABLE']} -u {old_fw_path} -u force")
     time.sleep(5)
-    assert _get_current_fw_version(config, run_cmd) == old_fw_version
+    assert _get_current_fw_version(config('rt'), run_cmd) == old_fw_version
 
-    assert "SUCCESS" in run_cmd(f"{config['EXECUTABLE']}  -u {latest_fw_path} -u force")
+    assert "SUCCESS" in run_cmd(f"{config('rt')['EXECUTABLE']}  -u {latest_fw_path} -u force")
     time.sleep(5)
-    assert _get_current_fw_version(config, run_cmd) == latest_fw_version
+    assert _get_current_fw_version(config('rt'), run_cmd) == latest_fw_version
 
 
 @pytest.mark.smoke
@@ -178,11 +178,11 @@ def test_firmware_update_scenario(rt_base_path, config, run_cmd):
 @pytest.mark.parametrize("arg", ["-g", "--fwversion"])
 def test_get_fw_version_options(arg, rt_base_path, config, run_cmd):
     """-g, --fwversion 옵션이 펌웨어 파일의 버전 정보를 정확히 읽어오는지 테스트합니다."""
-    fw_path_to_test = f"{rt_base_path}/{config['FIRMWARE_FILES']['LATEST']}"
-    expected_version_str = config["CURRENT_VERSIONS"]["FIRMWARE"].replace('v', '')
+    fw_path_to_test = f"{rt_base_path}/{config('rt')['FIRMWARE_FILES']['LATEST']}"
+    expected_version_str = config('rt')["CURRENT_VERSIONS"]["FIRMWARE"].replace('v', '')
 
-    output_text = run_cmd(f"{config['EXECUTABLE']} {arg} {fw_path_to_test}")
-    assert config['CURRENT_VERSIONS']['DX_RT'] in output_text
+    output_text = run_cmd(f"{config('rt')['EXECUTABLE']} {arg} {fw_path_to_test}")
+    assert config('rt')['CURRENT_VERSIONS']['DX_RT'] in output_text
     assert "FW Binary Information" in output_text
     assert f"fwFile:{fw_path_to_test}" in output_text
 
@@ -199,10 +199,10 @@ def test_get_fw_version_options(arg, rt_base_path, config, run_cmd):
 @pytest.mark.parametrize("arg", ["-v", "--version"])
 def test_version_options(arg, config, run_cmd):
     """-v, --version 옵션이 최소 요구 버전을 정확히 출력하는지 테스트합니다."""
-    output_text = run_cmd(f"{config['EXECUTABLE']} {arg}")
+    output_text = run_cmd(f"{config('rt')['EXECUTABLE']} {arg}")
 
-    current_versions = config["CURRENT_VERSIONS"]
-    min_versions = config["MINIMUM_VERSIONS"]
+    current_versions = config('rt')["CURRENT_VERSIONS"]
+    min_versions = config('rt')["MINIMUM_VERSIONS"]
 
     assert current_versions['DX_RT'] in output_text
     assert f"Device Driver: {current_versions['RT_DRIVER']}" in output_text
@@ -218,7 +218,7 @@ def test_version_options(arg, config, run_cmd):
 @pytest.mark.parametrize("arg", ["-r", "--reset"])
 def test_reset_options(arg, config, run_cmd):
     """-r 와 --reset 옵션이 모두 동일하게 동작하는지 테스트합니다."""
-    cmd_str = f"{config['EXECUTABLE']} {arg} 0"
+    cmd_str = f"{config('rt')['EXECUTABLE']} {arg} 0"
     output_text = run_cmd(cmd_str)
     assert f"Device reset is complete" in output_text
 

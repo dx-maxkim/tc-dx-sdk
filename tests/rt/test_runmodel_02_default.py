@@ -9,7 +9,7 @@ def test_runmodel_default(all_suite_path, config, run_cmd):
     """run_model 의 -m, --model 옵션으로 기본 벤치마크 모드가 정상 동작하는지 테스트합니다."""
 
     for arg in ["-m", "--model"]:
-        model_path = f"{all_suite_path}/{config['runmodel_benchmark']['default_model_path']}"
+        model_path = f"{all_suite_path}/{config('rt')['runmodel_benchmark']['default_model_path']}"
         cmd_str = f"run_model {arg} {model_path}"
         output = run_cmd(cmd_str)
 

@@ -19,7 +19,7 @@ def test_yolo_from_config(app_base_path, timeout_sec, config):
     - Fail: 동작을 안하거나 동작 간 에러 발생
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['yolo_camera'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
+    cfg = config('app')['yolo_camera'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
     command_str = cfg.get('command')
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
@@ -28,15 +28,13 @@ def test_yolo_from_config(app_base_path, timeout_sec, config):
 
     command_parts = shlex.split(command_str)
 
-    bk_path = os.getcwd()
-    os.chdir(app_base_path)
-
     process = None
     try:
         # 1. Popen으로 백그라운드에서 프로세스 시작
         print(f"\n프로세스 실행: {' '.join(command_parts)}")
         process = subprocess.Popen(
                 command_parts,
+                cwd=app_base_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True  # ensures output is in string format, not bytes
@@ -74,7 +72,6 @@ def test_yolo_from_config(app_base_path, timeout_sec, config):
         # 패턴 설명: '[DXAPP] [INFO] fps: ' 뒤에 오는 숫자(\d)나 점(.)을 캡처
         match = re.search(r"\[DXAPP\] \[INFO\] fps : ([\d.]+)", combined_output)
         if match:
-            pytest.fail("Expected FPS output line was not found.")
             fps = float(match.group(1))
             # FPS 값이 25보다 큰지 assert로 확인. 실패 시 메시지 출력
             assert fps > 25, f"FPS check failed: {fps} is not greater than 25."
@@ -97,6 +94,3 @@ def test_yolo_from_config(app_base_path, timeout_sec, config):
         if process:
             process.kill()
         pytest.fail(f"테스트 실행 중 예기치 않은 오류 발생: {e}")
-
-    finally:
-        os.chdir(bk_path)

@@ -15,9 +15,9 @@ def test_classification_from_config(app_base_path, config):
     - Fail: 실행이 안되거나 다른 결과를 출력
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    config = config['classification_image'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
-    command_str = config.get('command')
-    expected_output = config.get('expected_output')
+    cfg = config('app')['classification_image'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
+    command_str = cfg.get('command')
+    expected_output = cfg.get('expected_output')
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not command_str or not expected_output:
@@ -25,14 +25,12 @@ def test_classification_from_config(app_base_path, config):
 
     command_parts = shlex.split(command_str)
 
-    bk_path = os.getcwd()
-    os.chdir(app_base_path)
-
     # 예외 처리를 포함하여 명령어를 실행합니다.
     try:
         result = subprocess.run(
             command_parts,
             capture_output=True,
+            cwd=app_base_path,
             text=True,
             check=True,
             timeout=60
@@ -56,9 +54,6 @@ def test_classification_from_config(app_base_path, config):
     except subprocess.TimeoutExpired:
         pytest.fail("스크립트 실행 시간이 초과되었습니다.")
 
-    finally:
-        os.chdir(bk_path)
-
 
 @pytest.mark.smoke
 @pytest.mark.normal
@@ -70,10 +65,10 @@ def test_classification_async_from_config(app_base_path, config):
     - Fail: 실행이 안되거나 다른 결과를 출력, FPS가 기준 미달
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    config = config['classification_image'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
-    command_str = config.get('command_async')
-    expected_output = config.get('expected_output')
-    minimum_fps = config.get('minimum_fps')
+    cfg = config('app')['classification_image'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
+    command_str = cfg.get('command_async')
+    expected_output = cfg.get('expected_output')
+    minimum_fps = cfg.get('minimum_fps')
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not command_str or not expected_output or not minimum_fps:
@@ -81,14 +76,12 @@ def test_classification_async_from_config(app_base_path, config):
 
     command_parts = shlex.split(command_str)
 
-    bk_path = os.getcwd()
-    os.chdir(app_base_path)
-
     # 예외 처리를 포함하여 명령어를 실행합니다.
     try:
         result = subprocess.run(
             command_parts,
             capture_output=True,
+            cwd=app_base_path,
             text=True,
             check=True,
             timeout=60
@@ -117,6 +110,3 @@ def test_classification_async_from_config(app_base_path, config):
 
     except subprocess.TimeoutExpired:
         pytest.fail("스크립트 실행 시간이 초과되었습니다.")
-
-    finally:
-        os.chdir(bk_path)

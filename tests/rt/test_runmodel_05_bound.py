@@ -30,7 +30,7 @@ def test_runmodel_bound_single(all_suite_path, config, run_cmd):
     # 6: NPU_0/2
     options = 7
     for opt in range(options):
-        model_path = f"{all_suite_path}/{config['runmodel_benchmark']['default_model_path']}"
+        model_path = f"{all_suite_path}/{config('rt')['runmodel_benchmark']['default_model_path']}"
         run_model_cmd = shlex.split(f"run_model -m {model_path} -t 3 -n {opt}")
         dxtop_cmd = ['dxtop']
 
@@ -112,7 +112,7 @@ def test_runmodel_bound_double(all_suite_path, config, run_cmd):
         (3, 1)
     ]
     for opt1, opt2 in opt_list:
-        model_path = f"{all_suite_path}/{config['runmodel_benchmark']['default_model_path']}"
+        model_path = f"{all_suite_path}/{config('rt')['runmodel_benchmark']['default_model_path']}"
         run_model_cmd1 = shlex.split(f"run_model -m {model_path} -t 3 -n {opt1}")
         print(run_model_cmd1)
         run_model_cmd2 = shlex.split(f"run_model -m {model_path} -t 3 -n {opt2}")

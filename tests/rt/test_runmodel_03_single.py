@@ -8,7 +8,7 @@ import re
 def test_runmodel_single(all_suite_path, config, run_cmd):
     """-s, -l 옵션의 short/long form을 사용한 single mode 동작을 검증합니다."""
 
-    model_path = f"{all_suite_path}/{config['runmodel_benchmark']['default_model_path']}"
+    model_path = f"{all_suite_path}/{config('rt')['runmodel_benchmark']['default_model_path']}"
 
     for single_opt in ["-s", "--single"]:
         for loops_opt in ["-l", "--loops"]:

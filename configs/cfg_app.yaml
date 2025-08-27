@@ -292,7 +292,7 @@ run_detector_test:
 # 26 - dxengine_install
 dxengine_install_test:
   # 실행할 명령어
-  venv_python: "../../venv-dx-runtime" # python_package 기준으로 상대위치
+  venv_python: "../venv-dx-runtime" # python_package 기준으로 상대위치
   dxengine_path: "../dx_rt/python_package"
   # 검증할 기대 출력값
   expected_output: |

@@ -19,7 +19,7 @@ def test_yolo_from_config(app_base_path, timeout_sec, config):
     - Fail: 동작을 안하거나 동작 간 에러 발생
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['yolo_multi_1cam_35video']
+    cfg = config('app')['yolo_multi_1cam_35video']
     command_str = cfg.get('command')
     copy_config = cfg.get('copy_config')
 
@@ -37,15 +37,13 @@ def test_yolo_from_config(app_base_path, timeout_sec, config):
 
     command_parts = shlex.split(command_str)
 
-    bk_path = os.getcwd()
-    os.chdir(app_base_path)
-
     process = None
     try:
         # 1. Popen으로 백그라운드에서 프로세스 시작
         print(f"\n프로세스 실행: {' '.join(command_parts)}")
         process = subprocess.Popen(
                 command_parts,
+                cwd=app_base_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True  # ensures output is in string format, not bytes
@@ -97,6 +95,3 @@ def test_yolo_from_config(app_base_path, timeout_sec, config):
         if process:
             process.kill()
         pytest.fail(f"테스트 실행 중 예기치 않은 오류 발생: {e}")
-
-    finally:
-        os.chdir(bk_path)

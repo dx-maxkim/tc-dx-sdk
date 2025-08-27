@@ -17,7 +17,7 @@ def test_com_basic_command(com_base_path, config, run_cmd):
     - Fail: 동작이 되지 않음
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['basic_cmd']
+    cfg = config('com')['basic_cmd']
     cmd_list = [ cfg.get('cmd1'), cfg.get('cmd2'), cfg.get('cmd3') ]
     out_list = [ cfg.get('out1'), cfg.get('out2'), cfg.get('out3') ]
     timeout_sec = cfg.get('timeout')
@@ -59,7 +59,7 @@ def test_com_basic_shrink_command(com_base_path, config, run_cmd):
     - Fail: 동작이 되지 않음
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['basic_cmd']
+    cfg = config('com')['basic_cmd']
     cmd_list = [ cfg.get('cmd1'), cfg.get('cmd2'), cfg.get('cmd3') ]
     out_list = [ cfg.get('out1'), cfg.get('out2'), cfg.get('out3') ]
 
@@ -107,7 +107,7 @@ def test_com_basic_shrink_command(com_base_path, config, run_cmd):
 
         if ratio > SHRINK_RATIO_MAX:
             errors.append(
-                f"[FAIL] {shrink_rel}: shrink too big "
+                f"[FAIL] {shrink}: shrink too big "
                 f"(base={base_sz}, shrink={shrink_sz}, ratio={ratio:.2f} > {SHRINK_RATIO_MAX})"
             )
         else:
@@ -129,7 +129,7 @@ def test_com_basic_genlog_command(com_base_path, config, run_cmd):
     - Fail: 동작이 되지 않거나 로그파일 미생성
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['basic_cmd']
+    cfg = config('com')['basic_cmd']
     cmd = cfg.get('cmd1')
     outfile = cfg.get('out1')
     logfile = cfg.get('logfile')
@@ -137,7 +137,7 @@ def test_com_basic_genlog_command(com_base_path, config, run_cmd):
     # 실행 전 output 파일들 있을경우 삭제
     out_path = Path(f"{com_base_path}/dx_com") / outfile
     log_path = Path(f"{com_base_path}/dx_com") / logfile
-    if out_path.exists(): out_path.unlink()
+    #if out_path.exists(): out_path.unlink()
     if log_path.exists(): log_path.unlink()
 
     cmd_str = f"{cmd} --gen_log"
@@ -166,7 +166,7 @@ def test_com_parse_model(com_base_path, config, run_cmd):
     - Fail: 잘못된 값이 출력
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['basic_cmd']
+    cfg = config('com')['basic_cmd']
     out_list = [ cfg.get('out1'), cfg.get('out2'), cfg.get('out3') ]
     dxnn_fmt_ver = cfg.get('dxnn_format_version')
     dxnn_com_ver = cfg.get('compiler_version')

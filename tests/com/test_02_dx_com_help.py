@@ -15,11 +15,7 @@ def test_com_help(com_base_path, config, run_cmd):
     - Fail:동작이 되지 않음
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    dx_com_path = config['dx_com_path']
-
-    # 설정 파일에 필요한 키가 있는지 확인합니다.
-    if not dx_com_path:
-        pytest.fail("config 파일에 'dx_com_path' 키가 없습니다.")
+    dx_com_path = config('com')['dx_com_path']
 
     # -h, --help 옵션 각각 실행 후 동일여부 확인
     cmd_str = f"{dx_com_path} -h"

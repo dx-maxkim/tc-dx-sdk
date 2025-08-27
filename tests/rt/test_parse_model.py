@@ -10,7 +10,7 @@ def test_parse_model(config, run_cmd, all_suite_path):
     - Pass: Test 결과가 모두 OK
     - Fail: 원하는 결과가 나오지 않을 경우
     """
-    cfg = config['parse_model']
+    cfg = config('rt')['parse_model']
     model_path = f"{all_suite_path}/{cfg.get('model_path')}"
     expected_output = cfg.get('expected_output')
 

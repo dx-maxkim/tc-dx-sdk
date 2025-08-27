@@ -17,7 +17,7 @@ def test_run_detector_from_config(app_base_path, config):
     - Fail: 동작을 안하거나 예상된 결과와 다른 결과를 출력
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['run_detector_test'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
+    cfg = config('app')['run_detector_test'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
     command_str = cfg.get('command')
     expected_output = cfg.get('expected_output')
     result_file1 = pathlib.Path(cfg.get('expected_result1'))
@@ -32,14 +32,12 @@ def test_run_detector_from_config(app_base_path, config):
 
     command_parts = shlex.split(command_str)
 
-    bk_path = os.getcwd()
-    os.chdir(app_base_path)
-
     # 예외 처리를 포함하여 명령어를 실행합니다.
     try:
         result = subprocess.run(
             command_parts,
             capture_output=True,
+            cwd=app_base_path,
             text=True,
             check=True,
             timeout=60
@@ -52,13 +50,13 @@ def test_run_detector_from_config(app_base_path, config):
 
         # 삭제하여 테스트 환경을 깨끗하게 합니다.
         if result_file1.exists():
-            output_dir = pathlib.Path(f"{bk_path}/output")
+            output_dir = pathlib.Path(f"output")
             output_dir.mkdir(exist_ok=True)
-            result_file1.rename(f"{bk_path}/output/run_det_{cfg.get('expected_result1')}")
-        if result_file2.exists(): result_file2.rename(f"{bk_path}/output/run_det_{cfg.get('expected_result2')}")
-        if result_file3.exists(): result_file3.rename(f"{bk_path}/output/run_det_{cfg.get('expected_result3')}")
-        if result_file4.exists(): result_file4.rename(f"{bk_path}/output/run_det_{cfg.get('expected_result4')}")
-        if result_file5.exists(): result_file5.rename(f"{bk_path}/output/run_det_{cfg.get('expected_result5')}")
+            result_file1.rename(f"output/run_det_{cfg.get('expected_result1')}")
+        if result_file2.exists(): result_file2.rename(f"output/run_det_{cfg.get('expected_result2')}")
+        if result_file3.exists(): result_file3.rename(f"output/run_det_{cfg.get('expected_result3')}")
+        if result_file4.exists(): result_file4.rename(f"output/run_det_{cfg.get('expected_result4')}")
+        if result_file5.exists(): result_file5.rename(f"output/run_det_{cfg.get('expected_result5')}")
 
     except FileNotFoundError:
         pytest.fail(f"실행 파일을 찾을 수 없습니다: '{command_parts}'. 경로를 확인해주세요.")
@@ -74,12 +72,11 @@ def test_run_detector_from_config(app_base_path, config):
         pytest.fail("스크립트 실행 시간이 초과되었습니다.")
 
     finally:
-        os.chdir(bk_path)
-        result_image_path1 = f"{bk_path}/output/run_det_{cfg.get('expected_result1')}"
-        result_image_path2 = f"{bk_path}/output/run_det_{cfg.get('expected_result2')}"
-        result_image_path3 = f"{bk_path}/output/run_det_{cfg.get('expected_result3')}"
-        result_image_path4 = f"{bk_path}/output/run_det_{cfg.get('expected_result4')}"
-        result_image_path5 = f"{bk_path}/output/run_det_{cfg.get('expected_result5')}"
+        result_image_path1 = f"output/run_det_{cfg.get('expected_result1')}"
+        result_image_path2 = f"output/run_det_{cfg.get('expected_result2')}"
+        result_image_path3 = f"output/run_det_{cfg.get('expected_result3')}"
+        result_image_path4 = f"output/run_det_{cfg.get('expected_result4')}"
+        result_image_path5 = f"output/run_det_{cfg.get('expected_result5')}"
         if os.path.exists(result_image_path1): subprocess.Popen(['xdg-open', str(result_image_path1)])
         if os.path.exists(result_image_path2): subprocess.Popen(['xdg-open', str(result_image_path2)])
         if os.path.exists(result_image_path3): subprocess.Popen(['xdg-open', str(result_image_path3)])
@@ -107,7 +104,7 @@ def test_run_detector_all_from_config(app_base_path, config):
 
     for cfg_idx in cmd_extra_list:
         # YAML 파일에서 설정 정보를 불러옵니다.
-        command_str = config['run_detector_test'][cfg_idx]
+        command_str = config('app')['run_detector_test'][cfg_idx]
 
         # Preview demo
         if 'realtime' or 'multi_input' in command_str:

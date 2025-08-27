@@ -12,7 +12,7 @@ def test_directory_contains_exact_files_from_config(app_base_path, config):
      - Pass: 목록에 있는 파일들이 모두 존재하는 경우
      - Fail: 목록에 있는 파일들이 없거나 목록 외의  다른 파일이 있을 경우
     """
-    CONFIG = config['file_bin'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
+    CONFIG = config('app')['file_bin'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
     APP_DIR = pathlib.Path(CONFIG['directory'])
     EXPECTED_FILES = set(CONFIG['expected_files']) # 리스트를 집합(set)으로 변환
 
@@ -43,17 +43,12 @@ def test_bin_help_from_config(app_base_path, config):
      - Pass: help 옵션을 통해 기능별 설명이 출력
      - Fail: 기능 설명 출력되지 않음
     """
-    CONFIG = config['file_bin'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
+    CONFIG = config('app')['file_bin'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
     APP_DIR = pathlib.Path(CONFIG['directory'])
     EXPECTED_FILES = set(CONFIG['expected_files']) # 리스트를 집합(set)으로 변환
 
-    bk_path = os.getcwd()
-    os.chdir(app_base_path)
-
     for exe in sorted(EXPECTED_FILES):
         exe = f"{APP_DIR}/{exe}"
-        # 실행권한 확인
-        assert os.access(exe, os.X_OK), f"실행 권한 없음: {exe}"
 
         # -h. --help도 시도
         for args in (["-h"], ["--help"]):
@@ -61,6 +56,7 @@ def test_bin_help_from_config(app_base_path, config):
                 res = subprocess.run(
                     [str(exe), *args],
                     capture_output=True, text=True, encoding="utf-8",
+                    cwd=app_base_path,
                     timeout=5, check=False
                 )
             except subprocess.TimeoutExpired:

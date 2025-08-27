@@ -14,7 +14,7 @@ def test_run_classifier_from_config(app_base_path, config):
     - Fail: 동작을 안하거나 예상된 결과와 다른 결과를 출력
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['run_classifier_test'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
+    cfg = config('app')['run_classifier_test'] # Load 'cfg_app.yaml' from 'tests/app/conftest.py'
     command_str = cfg.get('command')
     expected_output = cfg.get('expected_output')
 
@@ -24,14 +24,12 @@ def test_run_classifier_from_config(app_base_path, config):
 
     command_parts = shlex.split(command_str)
 
-    bk_path = os.getcwd()
-    os.chdir(app_base_path)
-
     # 예외 처리를 포함하여 명령어를 실행합니다.
     try:
         result = subprocess.run(
             command_parts,
             capture_output=True,
+            cwd=app_base_path,
             text=True,
             check=True,
             timeout=60
@@ -54,8 +52,5 @@ def test_run_classifier_from_config(app_base_path, config):
 
     except subprocess.TimeoutExpired:
         pytest.fail("스크립트 실행 시간이 초과되었습니다.")
-
-    finally:
-        os.chdir(bk_path)
 
 

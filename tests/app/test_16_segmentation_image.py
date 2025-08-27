@@ -14,9 +14,9 @@ def test_pose_from_config(app_base_path, config):
     - Fail: 동작을 안하거나 동작 간 에러 발생, 또는 결과파일 생성 안됨
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
-    cfg = config['segmentation_image'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
+    cfg = config('app')['segmentation_image'] # Load cfg_app.yaml >> refer to tests/app/conftest.py
     command_str = cfg.get('command')
-    result_file = pathlib.Path(cfg.get('expected_result'))
+    result_file = pathlib.Path(f"{app_base_path}/{cfg.get('expected_result')}")
 
     # 혹시 이전에 실패해서 파일이 남아있다면 미리 삭제하여 테스트 환경을 깨끗하게 합니다.
     if result_file.exists():
@@ -28,14 +28,12 @@ def test_pose_from_config(app_base_path, config):
 
     command_parts = shlex.split(command_str)
 
-    bk_path = os.getcwd()
-    os.chdir(app_base_path)
-
     # 예외 처리를 포함하여 명령어를 실행합니다.
     try:
         result = subprocess.run(
             command_parts,
             capture_output=True,
+            cwd=app_base_path,
             text=True,
             check=True,
             timeout=60
@@ -47,9 +45,9 @@ def test_pose_from_config(app_base_path, config):
 
         # 삭제하여 테스트 환경을 깨끗하게 합니다.
         if result_file.exists():
-            output_dir = pathlib.Path(f"{bk_path}/output")
+            output_dir = pathlib.Path(f"output")
             output_dir.mkdir(exist_ok=True)
-            result_file.rename(f"{bk_path}/output/segmentation_{cfg.get('expected_result')}")
+            result_file.rename(f"output/segmentation_{cfg.get('expected_result')}")
 
     except FileNotFoundError:
         pytest.fail(f"실행 파일을 찾을 수 없습니다: '{command_parts}'. 경로를 확인해주세요.")
@@ -65,7 +63,6 @@ def test_pose_from_config(app_base_path, config):
         pytest.fail("스크립트 실행 시간이 초과되었습니다.")
 
     finally:
-        os.chdir(bk_path)
-        result_image_path = f"{bk_path}/output/segmentation_{cfg.get('expected_result')}"
+        result_image_path = f"output/segmentation_{cfg.get('expected_result')}"
         if os.path.exists(result_image_path):
             subprocess.Popen(['xdg-open', str(result_image_path)])

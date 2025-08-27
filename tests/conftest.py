@@ -1,5 +1,9 @@
 import pytest
 import os
+import yaml
+import pathlib
+import shlex
+import subprocess
 from pytest_html import extras
 from datetime import datetime
 from py.xml import html
@@ -167,3 +171,81 @@ def pytest_html_results_table_row(report, cells):
     desc = getattr(report, 'description', '')
     description_html = html.td(desc, class_='col-description', style="white-space: pre-wrap;")
     cells.insert(-1, description_html)
+
+
+
+@pytest.fixture(scope="session")
+def config():
+    """
+    설정 파일을 로드하는 팩토리 함수를 반환합니다.
+    사용법: config("app") 또는 config("com")
+    """
+    def _load_config(cfg_type: str):
+        """cfg_type에 따라 적절한 설정 파일을 로드하는 함수"""
+        
+        # cfg_type 값에 따라 파일 이름을 매핑
+        file_map = {
+            "app": "configs/cfg_app.yaml",
+            "com": "configs/cfg_com.yaml",
+            "rt":  "configs/cfg_rt.yaml",
+            "st":  "configs/cfg_st.yaml"
+        }
+
+        # 유효하지 않은 cfg_type이 들어올 경우 에러 발생
+        if cfg_type not in file_map:
+            pytest.fail(f"잘못된 cfg_type: '{cfg_type}'")
+
+        config_path = pathlib.Path(file_map[cfg_type])
+
+        if not config_path.is_file():
+            pytest.fail(f"설정 파일 '{config_path}' 없음")
+
+        try:
+            # 파일 읽기 및 YAML 파싱
+            return yaml.safe_load(config_path.read_text(encoding="utf-8"))
+        except yaml.YAMLError as e:
+            # YAML 형식 오류 발생 시 테스트 실패 처리
+            pytest.fail(f"'{config_path}' 파일의 YAML 형식이 잘못되었습니다.\n오류: {e}")
+
+    # 데이터가 아닌 함수 자체를 반환
+    return _load_config
+
+
+@pytest.fixture
+def run_cmd():
+    """
+    사용법:
+        stdout = run_cmd("abc --help")
+    """
+    def _run_command(cmd_str, *, check=True, env=None, cwd=None, timeout=None, echo=True):
+        command = shlex.split(cmd_str)
+        if echo:
+            print(f"### Command: {command}")
+        merged_env = {**os.environ, "LC_ALL": "C"}
+        if env:
+            merged_env.update(env)
+
+        try:
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                check=check,
+                encoding="utf-8",
+                env=merged_env,
+                cwd=cwd,
+                timeout=timeout,
+            )
+            return result.stdout
+
+        except FileNotFoundError as e:
+            pytest.fail(f"Command not found: {command[0]}\n{e}")
+
+        except subprocess.CalledProcessError as e:
+            err = e.stderr or e.stdout or str(e)
+            pytest.fail(f"Command execution failed for '{' '.join(command)}'\n{err}")
+
+        except subprocess.TimeoutExpired as e:
+            pytest.fail(f"Command timed out after {timeout}s: {' '.join(command)}\n{e}")
+
+    return _run_command

@@ -12,7 +12,7 @@ def test_python_examples(config, run_cmd, all_suite_path, loop_cnt):
     - Pass: Test 결과가 모두 OK
     - Fail: 원하는 결과가 나오지 않을 경우
     """
-    model_path = f"{all_suite_path}/{config['bin_examples']['model_path']}"
+    model_path = f"{all_suite_path}/{config('rt')['bin_examples']['model_path']}"
     python_path = f"{all_suite_path}/dx-runtime/dx_rt/examples/python"
     venv_path = f"{all_suite_path}/dx-runtime/venv-dx-runtime/bin/python3"
 

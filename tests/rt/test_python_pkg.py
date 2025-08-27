@@ -27,7 +27,7 @@ def test_python_package(config, run_cmd, rt_base_path):
             whl_file.unlink()
 
     # Python venv
-    venv_path = f"{rt_base_path}/{config['python_package']['venv_python']}"
+    venv_path = f"{rt_base_path}/{config('rt')['python_package']['venv_python']}"
     venv_bin_path = f"{venv_path}/bin"
 
     env = os.environ.copy()

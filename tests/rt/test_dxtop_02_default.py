@@ -60,8 +60,8 @@ def test_dxtop_default(config, timeout_sec):
 
     # 버전 값 비교 (키 이름은 환경에 맞게 조정)
     v_rt, v_drv, v_top = m_rt.group(1), m_drv.group(1), m_top.group(1)
-    assert v_rt  == config['CURRENT_VERSIONS']['DX_RT'],        f"DX-RT mismatch: {v_rt}"
-    assert v_drv == config['CURRENT_VERSIONS']['RT_DRIVER'],    f"Driver mismatch: {v_drv}"
-    assert v_top == config['CURRENT_VERSIONS']['DX_TOP'],       f"DX-TOP mismatch: {v_top}"
+    assert v_rt  == config('rt')['CURRENT_VERSIONS']['DX_RT'],        f"DX-RT mismatch: {v_rt}"
+    assert v_drv == config('rt')['CURRENT_VERSIONS']['RT_DRIVER'],    f"Driver mismatch: {v_drv}"
+    assert v_top == config('rt')['CURRENT_VERSIONS']['DX_TOP'],       f"DX-TOP mismatch: {v_top}"
     assert metrics_seen >= 1, f"Not enough metric lines: {metrics_seen} < 1"
 

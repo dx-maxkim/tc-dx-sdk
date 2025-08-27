@@ -39,16 +39,13 @@ def test_yolo_aging_from_config(app_base_path, test_case, repeat_cnt):
     """
     # YAML 파일에서 설정 정보를 불러옵니다.
     command_str = test_case.get('command')
-    result_file = pathlib.Path(test_case.get('expected_result'))
+    result_file = pathlib.Path(f"{app_base_path}/{test_case.get('expected_result')}")
 
     # 설정 파일에 필요한 키가 있는지 확인합니다.
     if not command_str or not result_file:
         pytest.fail(f"설정 파일의 테스트 케이스 '{test_case.get('name')}'에 'command' 또는 'expected_result' 키가 없습니다.")
 
     command_parts = shlex.split(command_str)
-
-    bk_path = os.getcwd()
-    os.chdir(app_base_path)
 
     # 혹시 이전에 실패해서 파일이 남아있다면 미리 삭제하여 테스트 환경을 깨끗하게 합니다.
     if result_file.exists():
@@ -60,6 +57,7 @@ def test_yolo_aging_from_config(app_base_path, test_case, repeat_cnt):
             result = subprocess.run(
                 command_parts,
                 capture_output=True,
+                cwd=app_base_path,
                 text=True,
                 check=True,
                 timeout=60
@@ -71,9 +69,9 @@ def test_yolo_aging_from_config(app_base_path, test_case, repeat_cnt):
 
             # 삭제하여 테스트 환경을 깨끗하게 합니다.
             if result_file.exists():
-                output_dir = pathlib.Path(f"{bk_path}/output")
+                output_dir = pathlib.Path(f"output")
                 output_dir.mkdir(exist_ok=True)
-                result_file.rename(f"{bk_path}/output/{test_case.get('name')}_{test_case.get('expected_result')}")
+                result_file.rename(f"output/{test_case.get('name')}_{test_case.get('expected_result')}")
 
     except FileNotFoundError:
         pytest.fail(f"실행 파일을 찾을 수 없습니다: '{command_parts}'. 경로를 확인해주세요.")
@@ -88,7 +86,6 @@ def test_yolo_aging_from_config(app_base_path, test_case, repeat_cnt):
         pytest.fail("스크립트 실행 시간이 초과되었습니다.")
 
     finally:
-        os.chdir(bk_path)
-        result_image_path = f"{bk_path}/output/{test_case.get('name')}_{test_case.get('expected_result')}"
+        result_image_path = f"output/{test_case.get('name')}_{test_case.get('expected_result')}"
         if os.path.exists(result_image_path):
             subprocess.Popen(['xdg-open', str(result_image_path)])
