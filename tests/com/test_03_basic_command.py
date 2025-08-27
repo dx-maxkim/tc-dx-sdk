@@ -19,6 +19,7 @@ def test_com_basic_command(com_base_path, config, run_cmd):
     cfg = config['basic_cmd']
     cmd_list = [ cfg.get('cmd1'), cfg.get('cmd2'), cfg.get('cmd3') ]
     out_list = [ cfg.get('out1'), cfg.get('out2'), cfg.get('out3') ]
+    timeout_sec = cfg.get('timeout')
 
     # 실행 전 output 파일들 있을경우 삭제
     for outfile in out_list:
@@ -28,7 +29,12 @@ def test_com_basic_command(com_base_path, config, run_cmd):
             print(f"Deleted old file: {out_path}")
 
     for cmd, outfile in zip(cmd_list, out_list):
-        run_cmd(cmd, cwd=f"{com_base_path}/dx_com")
+        # ResNet50 의 경우 compile time 이 정해진 시간안에 되는지 확인
+        if Path(outfile).name == 'ResNet50-1.dxnn':
+            print(f"{Path(outfile).name} compile 이 {timeout_sec} sec 안에 완료되는지 확인")
+            run_cmd(cmd, cwd=f"{com_base_path}/dx_com", timeout=timeout_sec)
+        else:
+            run_cmd(cmd, cwd=f"{com_base_path}/dx_com")
 
         # 파일 생성 확인
         out_path = Path(f"{com_base_path}/dx_com") / outfile
@@ -55,7 +61,6 @@ def test_com_basic_shrink_acommand(com_base_path, config, run_cmd):
     cfg = config['basic_cmd']
     cmd_list = [ cfg.get('cmd1'), cfg.get('cmd2'), cfg.get('cmd3') ]
     out_list = [ cfg.get('out1'), cfg.get('out2'), cfg.get('out3') ]
-    timeout_sec = cfg.get('timeout')
 
     # 실행 전 output 파일들 있을경우 삭제
     for outfile in out_list:
@@ -66,11 +71,7 @@ def test_com_basic_shrink_acommand(com_base_path, config, run_cmd):
 
     for cmd, outfile in zip(cmd_list, out_list):
         cmd_str = f"{cmd} --shrink"
-
-        if outfile.name == 'ResNet50-1.dxnn':
-            run_cmd(cmd_str, cwd=f"{com_base_path}/dx_com", timeout=timeout_sec)
-        else:
-            run_cmd(cmd_str, cwd=f"{com_base_path}/dx_com")
+        run_cmd(cmd_str, cwd=f"{com_base_path}/dx_com")
 
         # 파일 생성 확인
         out_path = Path(f"{com_base_path}/dx_com") / outfile
