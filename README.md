@@ -10,7 +10,7 @@ It offers both full and smoke tests across four key modules: APP, COM, RT, and S
     wget https://github.com/allure-framework/allure2/releases/download/2.34.1/allure_2.34.1-1_all.deb --no-check-certificate
     sudo apt install -y ./allure_2.34.1-1_all.deb
     rm allure_2.34.1-1_all.deb
-    sudo apt install -y v4l-utils
+    sudo apt install -y v4l-utils python3-venv
     sudo apt install -y openjdk-11-jdk # If fails, try 'openjdk-17-jdk'
     ```
 

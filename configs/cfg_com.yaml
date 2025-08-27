@@ -19,3 +19,4 @@ basic_cmd:
   out2: output/ResNet50-1/ResNet50-1.dxnn
   cmd3: dx_com/dx_com -m sample/YOLOV5-1.onnx -c sample/YOLOV5-1.json -o output/YOLOV5-1
   out3: output/YOLOV5-1/YOLOV5-1.dxnn
+  timeout: 10 # ResNet50 compile time < 3 mins
