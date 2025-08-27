@@ -1,7 +1,7 @@
 <img src="utils/banner.jpg" width="100%" alt="banner">
 
 # tc-dx-sdk
-A pre-release SDK validation tool from the CS Team. <br>
+A pre-release SDK validation tool by the CS Team. <br>
 It offers both full and smoke tests across four key modules: APP, COM, RT, and STREAM.
 
 ## Installation
@@ -23,7 +23,7 @@ It offers both full and smoke tests across four key modules: APP, COM, RT, and S
     ```
 
 ## Mandatory Settings
-- Set your actual `dx-all-suite` path of `pytest.ini` file:
+- Set the path to your 'dx-all-suite' directory in the 'pytest.ini':
     ```diff
     --- a/pytest.ini
     +++ b/pytest.ini
@@ -43,16 +43,16 @@ It offers both full and smoke tests across four key modules: APP, COM, RT, and S
     ```
 
 ## Usage and Options
-- Activate python virtual environment
+- Activate the Python virtual environment
 - Full Test
     ```shell
-    # Normal aging time
+    # Normal mode (standard duration)
     pytest
 
-    # Quick aging time
+    # Run with smoke mode (quick check)
     pytest -m smoke
 
-    # Long aging time
+    # Run with stress mode (extended duration)
     pytest -m stress
     ```
 - Module Test
@@ -69,7 +69,7 @@ It offers both full and smoke tests across four key modules: APP, COM, RT, and S
     # DX COM test
     pytest tests/com
 
-    # One function test 
+    # Test a single function:
     # - example: tests/rt/test_dxrt_cli.py -> test_reset_options
     pytest tests/rt/test_dxrt_cli.py -k test_reset_options -s
     ```
@@ -81,7 +81,7 @@ It offers both full and smoke tests across four key modules: APP, COM, RT, and S
     ```
 
 ## Report
-- Two types of test resport: HTML, Dashboard
+- Two types of test reports are available: HTML, Dashboard(allure)
 - Timestamped HTML reports are auto-generated in the report folder upon test completion `(e.g., report-08-21-20-22.html)`
 - Enable dashboard report:
     ```shell
@@ -92,4 +92,4 @@ It offers both full and smoke tests across four key modules: APP, COM, RT, and S
     ```
 
 ## Feedback
-- Ask a question on CS team or <dgkim@deepx.ai>
+- For questions or feedback, please contact the CS team or <dgkim@deepx.ai>
