@@ -23,20 +23,21 @@ It offers both full and smoke tests across four key modules: APP, COM, RT, and S
     ```
 
 ## Mandatory Settings
-- Set the path to your 'dx-all-suite' directory in the 'pytest.ini':
+- Set the path to your 'dx-all-suite' directory in the 'pytest.ini'
+- Example:
     ```diff
     --- a/pytest.ini
     +++ b/pytest.ini
     @@ -1,8 +1,8 @@
     [pytest]
-    -app_base_path = /home/max/Works/dx-all-suite/dx-runtime/dx_app
-    -rt_base_path = /home/max/Works/dx-all-suite/dx-runtime
-    -com_base_path = /home/max/Works/dx-all-suite/dx-compiler
-    -stream_base_path = /home/max/Works/dx-all-suite/dx-runtime/dx_stream
-    +app_base_path = /home/<your path>/dx-all-suite/dx-runtime/dx_app
-    +rt_base_path = /home/<your path>/dx-all-suite/dx-runtime
-    +com_base_path = /home/<your path>/dx-all-suite/dx-compiler
-    +stream_base_path = /home/<your path>/dx-all-suite/dx-runtime/dx_stream
+    -app_base_path = /home/<your_path>/dx-all-suite/dx-runtime/dx_app
+    -rt_base_path = /home/<your_path/dx-all-suite/dx-runtime
+    -com_base_path = /home/<your_path>/dx-all-suite/dx-compiler
+    -stream_base_path = /home/<your_path>/dx-all-suite/dx-runtime/dx_stream
+    +app_base_path = /home/deepx/dx-all-suite/dx-runtime/dx_app
+    +rt_base_path = /home/deepx/dx-all-suite/dx-runtime
+    +com_base_path = /home/deepx/dx-all-suite/dx-compiler
+    +stream_base_path = /home/deepx/dx-all-suite/dx-runtime/dx_stream
     testpaths = tests
     timeout = 60
     filterwarnings = ignore:The 'py' module is deprecated:DeprecationWarning
