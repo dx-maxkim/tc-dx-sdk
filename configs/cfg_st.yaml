@@ -1,0 +1,42 @@
+# 01 - DX_STREAM 이 잘 설치됐는지 확인
+dx_st_install:
+  command: "gst-inspect-1.0 dxstream"
+  expected: |
+    dxgather: DxGather
+    dxinfer: DXInfer
+    dxinputselector: DXInputSelector
+    dxmsgbroker: DXMsgBroker
+    dxmsgconv: DXMsgConv
+    dxosd: DXOsd
+    dxoutputselector: DXOutputSelector
+    dxpostprocess: DXPostprocess
+    dxpreprocess: DXPreprocess
+    dxrate: DXRate
+    dxtracker: DXTracker
+
+
+# 02 - 필요한 Gstreamer Plugin 이 설치됐는지 확인
+gst_plugin_install:
+  command: "dpkg-query -W -f='${Status}'"
+  required_plugins:
+    - gstreamer1.0-plugins-bad
+    - gstreamer1.0-plugins-base
+    - gstreamer1.0-plugins-good
+    - gstreamer1.0-libav
+    - gstreamer1.0-tools
+    - libgstreamer1.0-dev
+    - libgstreamer-plugins-base1.0-dev
+
+
+# 03 - run_demo.sh 를 실행하여 정상동작 여부 확인 (options: 0 - 7)
+run_demo:
+  command: "./run_demo.sh"
+  options:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
