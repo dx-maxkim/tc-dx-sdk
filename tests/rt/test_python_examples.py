@@ -6,6 +6,7 @@ import pytest
     pytest.param(500, marks=pytest.mark.normal),
     pytest.param(5000, marks=pytest.mark.stress),
 ])
+@pytest.mark.timeout(60*30) # 30 min timeout for this test
 def test_python_examples(config, run_cmd, all_suite_path, loop_cnt):
     """
     parse_model -m 정상 동작하는지 확인하는 테스트

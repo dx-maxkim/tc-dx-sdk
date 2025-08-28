@@ -107,7 +107,7 @@ def test_run_detector_all_from_config(app_base_path, config):
         command_str = config('app')['run_detector_test'][cfg_idx]
 
         # Preview demo
-        if 'realtime' or 'multi_input' in command_str:
+        if 'realtime' in command_str or 'multi_input' in command_str:
             process = None
             timeout_sec = 6
             try:
@@ -118,6 +118,7 @@ def test_run_detector_all_from_config(app_base_path, config):
                         cwd=app_base_path,
                         text=True  # ensures output is in string format, not bytes
                         )
+                print(f"### cmd(Popen): {command_str}")
                 print(f"{timeout_sec}초 동안 대기합니다...")
                 time.sleep(timeout_sec/2)
 
@@ -177,6 +178,7 @@ def test_run_detector_all_from_config(app_base_path, config):
                     cwd=app_base_path,
                     timeout=10
                 )
+                print(f"### cmd(run): {command_str}")
                 output = result.stdout
 
             except FileNotFoundError:

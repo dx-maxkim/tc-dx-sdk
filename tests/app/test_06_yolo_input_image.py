@@ -26,6 +26,7 @@ def get_test_ids(test_cases):
     pytest.param(10, marks=pytest.mark.normal),
     pytest.param(1000, marks=pytest.mark.stress),
 ])
+@pytest.mark.timeout(60*30) # 30 min timeout for this test
 @pytest.mark.parametrize(
     "test_case",                # 테스트 함수에 전달될 인자 이름
     load_config(),              # 인자에 주입될 데이터 (테스트 케이스 리스트)
