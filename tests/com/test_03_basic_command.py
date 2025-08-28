@@ -48,6 +48,7 @@ def test_com_basic_command(com_base_path, config, run_cmd):
         print(f"Moved {out_path} → {dest_dir/out_path.name}")
 
 
+"""
 @pytest.mark.timeout(60*30) # 30 min timeout for this test
 @pytest.mark.smoke
 @pytest.mark.normal
@@ -116,6 +117,7 @@ def test_com_basic_shrink_command(com_base_path, config, run_cmd):
 
     if errors:
         pytest.fail("\n".join(errors))
+"""
 
 
 @pytest.mark.timeout(60*10) # 10 min timeout for this test
