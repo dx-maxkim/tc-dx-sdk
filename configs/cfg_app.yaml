@@ -31,8 +31,9 @@ file_model:
     - SCRFD500M_1.dxnn
     - YOLOV3_1.dxnn
     - YOLOV4_3.dxnn
+    - YOLOV5_1.dxnn
     - YOLOV5Pose640_1.dxnn
-    - YOLOV5S_1.dxnn
+    - YOLOV5S-1.dxnn
     - YOLOV5S_3.dxnn
     - YOLOV5S_4.dxnn
     - YOLOV5S_6.dxnn
