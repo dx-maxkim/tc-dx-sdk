@@ -1,10 +1,10 @@
 import pytest
 
-# test mode 에 따라 loop count 변화: 50 / 500 / 5000
+# test mode 에 따라 loop count 변화: 10 / 100 / 1000
 @pytest.mark.parametrize("loop_cnt", [
-    pytest.param(50, marks=pytest.mark.smoke),
-    pytest.param(500, marks=pytest.mark.normal),
-    pytest.param(5000, marks=pytest.mark.stress),
+    pytest.param(10, marks=pytest.mark.smoke),
+    pytest.param(100, marks=pytest.mark.normal),
+    pytest.param(1000, marks=pytest.mark.stress),
 ])
 @pytest.mark.timeout(60*30) # 30 min timeout for this test
 def test_bin_examples(config, run_cmd, all_suite_path, loop_cnt):

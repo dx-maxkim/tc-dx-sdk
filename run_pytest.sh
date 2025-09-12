@@ -38,7 +38,7 @@ case "$1" in
 esac
 
 # 가상 환경 디렉터리 이름
-VENV_DIR="venv_tc"
+VENV_DIR=".venv_tc"
 
 # 1. 가상 환경 디렉터리가 없는지 확인
 if [ ! -d "$VENV_DIR" ]; then

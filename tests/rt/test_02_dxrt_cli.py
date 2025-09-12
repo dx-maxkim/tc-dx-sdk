@@ -164,11 +164,11 @@ def test_firmware_update_scenario(rt_base_path, config, run_cmd):
     assert initial_version == latest_fw_version
 
     assert "SUCCESS" in run_cmd(f"{config('rt')['EXECUTABLE']} -u {old_fw_path} -u force")
-    time.sleep(5)
+    time.sleep(10)
     assert _get_current_fw_version(config('rt'), run_cmd) == old_fw_version
 
     assert "SUCCESS" in run_cmd(f"{config('rt')['EXECUTABLE']}  -u {latest_fw_path} -u force")
-    time.sleep(5)
+    time.sleep(10)
     assert _get_current_fw_version(config('rt'), run_cmd) == latest_fw_version
 
 

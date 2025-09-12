@@ -18,7 +18,7 @@ def load_st_options():
     return config_data['run_demo']['options']
 
 
-@pytest.mark.timeout(60*5) # 5 min timeout for eachs test
+@pytest.mark.timeout(60*5) # 5 min timeout for each test
 @pytest.mark.parametrize('option_value', load_st_options())
 @pytest.mark.smoke
 @pytest.mark.normal
