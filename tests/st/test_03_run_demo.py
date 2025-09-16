@@ -44,7 +44,7 @@ def test_run_demo(stream_base_path, option_value, config):
             bufsize=1, # line buffering
             text=True  # ensures output is in string format, not bytes
         )
-        print(f"### cmd(Popen): {cmd}")
+        print(f"### cmd(Popen): {cmd} with option: {option_value}")
         time.sleep(1)
 
         # run_demo.sh 에 option 값을 넣어주는 부분
